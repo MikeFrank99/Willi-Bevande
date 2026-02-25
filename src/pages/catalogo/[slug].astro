@@ -1,0 +1,280 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+// Funzione Astro obbligatoria per generare percorsi statici da params dinamici
+export async function getStaticPaths() {
+    const beers = await getCollection("beers");
+
+    return beers.map((beer) => ({
+        params: { slug: beer.slug },
+        props: { beer },
+    }));
+}
+
+const { beer } = Astro.props;
+const { Content } = await beer.render();
+---
+
+<Layout
+    title={beer.data.title}
+    description={beer.data.description}
+    image={beer.data.image}
+>
+    <article class="beer-detail container">
+        <div class="back-link">
+            <a href="/catalogo">← Torna al Catalogo</a>
+        </div>
+
+        <div class="product-layout">
+            <!-- Image Section -->
+            <div class="product-image">
+                <!-- Usa un placeholder visivo per ora se l'img non punta a un asset reale -->
+                <div
+                    class="img-placeholder"
+                    title="Immagine di {beer.data.title}"
+                >
+                    <span class="icon">🍺</span>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="product-info">
+                <header>
+                    <p class="brand">{beer.data.brand}</p>
+                    <h1>{beer.data.title}</h1>
+                </header>
+
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <span class="label">Stile</span>
+                        <span class="value">{beer.data.style}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="label">Gradazione</span>
+                        <span class="value">{beer.data.abv}%</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="label">Nazione</span>
+                        <span class="value">{beer.data.country}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="label">Formati</span>
+                        <span class="value formats">
+                            {
+                                beer.data.format.map((f) => (
+                                    <span class="format-badge">{f}</span>
+                                ))
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <div class="markdown-content">
+                    <!-- Qui viene renderizzato il corpo del markdown scritto nel file della collezione -->
+                    <Content />
+                </div>
+
+                <div class="cta-section">
+                    <p class="b2b-notice">
+                        Sei un professionista del settore Ho.Re.Ca? Contattaci
+                        per il listino prezzi riservato e per effettuare un
+                        ordine.
+                    </p>
+                    <a
+                        href="mailto:ordini@willibevande.it"
+                        class="btn btn-primary btn-large"
+                        >Richiedi Informazioni</a
+                    >
+                </div>
+            </div>
+        </div>
+    </article>
+</Layout>
+
+<style lang="scss">
+    .beer-detail {
+        padding: 3rem 1rem 5rem 1rem;
+    }
+
+    .back-link {
+        margin-bottom: 2rem;
+
+        a {
+            font-weight: 600;
+            color: var(--color-text-light);
+
+            &:hover {
+                color: var(--color-primary);
+            }
+        }
+    }
+
+    .product-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .product-image {
+        position: sticky;
+        top: 100px;
+
+        .img-placeholder {
+            background-color: #f4f4f4;
+            border-radius: 12px;
+            aspect-ratio: 3/4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ebebeb;
+
+            .icon {
+                font-size: 8rem;
+                filter: grayscale(0.2);
+            }
+        }
+    }
+
+    .product-info {
+        header {
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 2rem;
+
+            .brand {
+                color: var(--color-text-light);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            h1 {
+                font-size: 3.5rem;
+                line-height: 1.1;
+                margin: 0;
+                color: var(--color-secondary);
+            }
+        }
+    }
+
+    .specs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+
+            .label {
+                font-size: 0.85rem;
+                color: var(--color-text-light);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .value {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--color-text);
+            }
+        }
+    }
+
+    .formats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .format-badge {
+            background: var(--color-bg);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+        }
+    }
+
+    .markdown-content {
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 3rem;
+    }
+
+    .cta-section {
+        background: var(--color-bg-alt);
+        padding: 2rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--color-primary);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+        .b2b-notice {
+            font-weight: 600;
+            color: var(--color-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+    }
+
+    .btn-large {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        border-radius: 6px;
+        background-color: var(--color-primary);
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all var(--transition-speed);
+        box-shadow: 0 4px 10px rgba(var(--color-primary), 0.3);
+        border: none;
+
+        &:hover {
+            background-color: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(var(--color-primary), 0.4);
+            color: white;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .product-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .product-image {
+            position: static;
+
+            .img-placeholder {
+                max-width: 400px;
+                margin: 0 auto;
+                aspect-ratio: 1;
+            }
+        }
+
+        .specs-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .product-info header h1 {
+            font-size: 2.5rem;
+        }
+    }
+</style>

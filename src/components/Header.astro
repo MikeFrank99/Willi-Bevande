@@ -1,0 +1,96 @@
+---
+import "../styles/global.scss";
+---
+
+<header class="main-header">
+    <div class="container header-content">
+        <a href="/" class="logo">
+            <span class="willi">Willi</span>
+            <span class="bevande">Bevande</span>
+        </a>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/catalogo">Catalogo Birre</a></li>
+                <li><a href="/servizi/impianti-spina">Impianti Spina</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<style lang="scss">
+    .main-header {
+        background-color: var(--color-secondary);
+        color: var(--color-bg-alt);
+        padding: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-bg-alt);
+            text-decoration: none;
+
+            .willi {
+                color: var(--color-bg-alt);
+            }
+            .bevande {
+                color: var(--color-primary);
+            }
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+
+            li a {
+                color: var(--color-bg-alt);
+                text-decoration: none;
+                font-weight: 500;
+                font-size: 1.1rem;
+                transition: color var(--transition-speed) ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+
+                &:hover,
+                &:focus {
+                    color: var(--color-primary);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-header .header-content {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .main-nav ul {
+            justify-content: center;
+            gap: 1.5rem;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+    }
+</style>

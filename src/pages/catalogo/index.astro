@@ -1,0 +1,57 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Catalog from "../../components/svelte/Catalog.svelte";
+
+// Recuperiamo tutti gli elementi della content collection "beers"
+const allBeers = await getCollection("beers");
+
+// Prepariamo l'array di dati da passare a Svelte (Svelte non "capisce" i metodi Astro intrinsechi come 'render', dobbiamo passargli un oggetto JSON serializzabile)
+const svelteBeers = allBeers.map((beer) => ({
+    id: beer.id,
+    body: beer.body,
+    collection: beer.collection,
+    data: beer.data,
+    slug: beer.slug,
+}));
+
+const pageTitle = "Catalogo Prodotti";
+const pageDescription =
+    "Esplora il nostro catalogo. Filtra le migliori birre per i professionisti del settore Horeca.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+    <div class="catalog-header">
+        <div class="container">
+            <h1>Il Nostro Catalogo</h1>
+            <p>{pageDescription}</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <Catalog client:load initialBeers={svelteBeers} />
+    </div>
+</Layout>
+
+<style>
+    .catalog-header {
+        background-color: var(--color-secondary);
+        color: var(--color-bg-alt);
+        padding: 4rem 0 3rem 0;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .catalog-header h1 {
+        color: var(--color-bg-alt);
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .catalog-header p {
+        color: #ccc;
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>

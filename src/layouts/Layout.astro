@@ -1,23 +1,70 @@
+---
+import AgeGate from "../components/AgeGate.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.scss";
+
+interface Props {
+	title: string;
+	description?: string;
+	image?: string;
+}
+
+const {
+	title,
+	description = "Catalogo e fornitura bevande B2B Horeca in Italia.",
+	image = "/default-og.jpg",
+} = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+
+		<!-- SEO Meta Tags -->
+		<title>{title} | Willi Bevande</title>
+		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<link rel="canonical" href={Astro.url} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={Astro.url} />
+		<meta property="og:title" content={`${title} | Willi Bevande`} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={new URL(image, Astro.url)} />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={Astro.url} />
+		<meta property="twitter:title" content={`${title} | Willi Bevande`} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={new URL(image, Astro.url)} />
 	</head>
 	<body>
-		<slot />
+		<!-- Age Gate Modal -->
+		<AgeGate />
+
+		<!-- Site Shell -->
+		<Header />
+
+		<main class="page-content">
+			<slot />
+		</main>
+
+		<Footer />
 	</body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
+	.page-content {
+		min-height: calc(
+			100vh - 200px
+		); /* Assicura che il footer stia sempre in basso */
+		display: flex;
+		flex-direction: column;
 	}
 </style>

@@ -1,0 +1,111 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="main-footer">
+    <div class="container footer-content">
+        <div class="footer-column branding">
+            <h3>Willi Bevande</h3>
+            <p>
+                Selezione e distribuzione delle migliori birre artigianali e
+                industriali per il settore Ho.Re.Ca.
+            </p>
+        </div>
+
+        <div class="footer-column contatti">
+            <h4>Contatti</h4>
+            <address>
+                Via Placeholder, 123<br />
+                00100 Città (PR)<br />
+                Italia<br /><br />
+                <a href="mailto:info@willibevande.it">info@willibevande.it</a
+                ><br />
+                <strong>PEC:</strong>
+                <a href="mailto:pec@pec.willibevande.it"
+                    >pec@pec.willibevande.it</a
+                >
+            </address>
+        </div>
+
+        <div class="footer-column legal">
+            <h4>Legale</h4>
+            <p>
+                <strong>Ragione Sociale:</strong> Willi Bevande S.R.L.<br />
+                <strong>P. IVA / C.F.:</strong> [INSERIRE PARTITA IVA]<br />
+                <strong>REA:</strong> [INSERIRE NUMERO REA]<br />
+                <strong>Capitale Sociale:</strong> [INSERIRE CAP. SOC.] i.v.
+            </p>
+            <div class="legal-links">
+                <a href="#privacy-policy" class="iubenda-link">Privacy Policy</a
+                > |
+                <a href="#cookie-policy" class="iubenda-link">Cookie Policy</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            &copy; {currentYear} Willi Bevande. Tutti i diritti riservati.
+        </div>
+    </div>
+</footer>
+
+<style lang="scss">
+    .main-footer {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        padding-top: 3rem;
+        margin-top: 4rem;
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        h3 {
+            color: var(--color-primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h4 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        p,
+        address {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            font-style: normal;
+            color: #b0b0b0;
+        }
+
+        a {
+            color: var(--color-primary);
+
+            &:hover {
+                color: #fff;
+                text-decoration: underline;
+            }
+        }
+
+        .legal-links {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom {
+            background-color: #000000;
+            text-align: center;
+            padding: 1.5rem 0;
+            font-size: 0.85rem;
+            color: #888;
+        }
+    }
+</style>

@@ -1,0 +1,246 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Impianti Spina in Comodato d'Uso";
+const description =
+    "Offriamo installazione e manutenzione di impianti di spillatura professionali in comodato d'uso gratuito per il tuo locale.";
+---
+
+<Layout title={title} description={description}>
+    <div class="service-hero">
+        <div class="container hero-content">
+            <h1>
+                Impianti Spina in <span class="highlight">Comodato d'Uso</span>
+            </h1>
+            <p>
+                La soluzione completa "chiavi in mano" per servire la birra
+                perfetta nel tuo locale, senza investimenti iniziali.
+            </p>
+        </div>
+    </div>
+
+    <section class="service-details container">
+        <div class="content">
+            <h2>Il nostro Servizio B2B</h2>
+            <p>
+                Sappiamo bene quanto sia importante servire una birra alla spina
+                perfetta per fidelizzare i clienti. Per questo, Willi Bevande
+                mette a disposizione dei propri partner commerciali <strong
+                    >impianti di spillatura professionali in comodato d'uso
+                    gratuito</strong
+                >.
+            </p>
+
+            <p>
+                Siamo noi a farci carico dell'investimento iniziale
+                dell'impianto. In cambio, ti chiediamo esclusivamente un accordo
+                di fornitura per l'acquisto dei fusti di birra. Il nostro
+                obiettivo è crescere insieme al tuo locale.
+            </p>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <span class="icon">💶</span>
+                    <h3>Zero Costi Iniziali</h3>
+                    <p>
+                        Fornitura, installazione e collaudo dell'impianto sono
+                        completamente a carico nostro.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <span class="icon">🔧</span>
+                    <h3>Manutenzione Inclusa</h3>
+                    <p>
+                        Interventi tecnici, riparazioni e sanificazione
+                        periodica delle linee coperti dal servizio.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <span class="icon">🎓</span>
+                    <h3>Consulenza e Training</h3>
+                    <p>
+                        Ti aiutiamo a selezionare i fusti ideali e insegniamo al
+                        tuo staff le tecniche di spillatura.
+                    </p>
+                </div>
+                <div class="benefit-card">
+                    <span class="icon">⚡</span>
+                    <h3>Attrezzatura Moderna</h3>
+                    <p>
+                        Ultimi modelli di erogatori, refrigeratori e colonne
+                        personalizzate adatte al design del tuo locale.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cta-box">
+                <h3>Pronto per migliorare l'offerta del tuo locale?</h3>
+                <p>
+                    Contattaci per un sopralluogo gratuito. Un nostro consulente
+                    valuterà gli spazi e i volumi del tuo bar, ristorante o pub
+                    per proporti la soluzione su misura ideale.
+                </p>
+                <div class="actions">
+                    <a
+                        href="mailto:info@willibevande.it"
+                        class="btn btn-primary btn-large"
+                        >Richiedi un Sopralluogo</a
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style lang="scss">
+    .service-hero {
+        background-color: var(--color-secondary);
+        color: var(--color-bg-alt);
+        padding: 6rem 0;
+        text-align: center;
+        border-bottom: 5px solid var(--color-primary);
+
+        h1 {
+            color: #fff;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+
+            .highlight {
+                color: var(--color-primary);
+            }
+        }
+
+        p {
+            font-size: 1.3rem;
+            color: #ddd;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    }
+
+    .service-details {
+        padding: 4rem 1rem;
+
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #444;
+        }
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin: 4rem 0;
+    }
+
+    .benefit-card {
+        background: #fff;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f0f0f0;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        .icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--color-secondary);
+        }
+
+        p {
+            font-size: 1rem;
+            color: #666;
+            margin: 0;
+        }
+    }
+
+    .cta-box {
+        background: #f9f4ef;
+        padding: 3rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-top: 2rem;
+
+        h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--color-secondary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #555;
+            max-width: 700px;
+            margin-inline: auto;
+        }
+
+        .btn-large {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            background-color: var(--color-primary);
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+
+            &:hover {
+                background-color: var(--color-primary-dark);
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(var(--color-primary), 0.3);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .service-hero {
+            padding: 4rem 1rem;
+
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-box {
+            padding: 2rem 1.5rem;
+
+            h3 {
+                font-size: 1.6rem;
+            }
+
+            .btn-large {
+                width: 100%;
+            }
+        }
+    }
+</style>

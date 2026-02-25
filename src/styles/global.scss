@@ -1,0 +1,67 @@
+:root {
+    --color-bg: #f9f9f9;
+    --color-bg-alt: #ffffff;
+    --color-text: #2a2a2a;
+    --color-text-light: #6a6a6a;
+    --color-primary: #d4a373;
+    /* Colore ambrato premium birra */
+    --color-primary-dark: #cc9056;
+    --color-secondary: #3e2723;
+    /* Marrone scuro */
+
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --container-width: 1200px;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+    color: var(--color-secondary);
+}
+
+a {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+
+    &:hover {
+        color: var(--color-secondary);
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Base Mobile First Font Sizing */
+html {
+    font-size: 14px;
+    /* Slightly smaller base font for mobile */
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}

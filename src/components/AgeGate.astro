@@ -1,0 +1,166 @@
+---
+// L'Age Gate viene renderizzato sul server originariamente
+// ma interaggisce solo lato client.
+---
+
+<div id="age-gate" class="age-gate-overlay" aria-hidden="true">
+    <div class="age-gate-modal">
+        <img
+            src="/bottle-icon-placeholder.svg"
+            alt="Willi Bevande Age Gate"
+            class="icon"
+        />
+        <h2>Benvenuto su Willi Bevande</h2>
+        <p>
+            Per navigare su questo sito ed esplorare il nostro catalogo devi
+            avere l'età legale per il consumo di bevande alcoliche nel tuo paese
+            di residenza (18+ in Italia).
+        </p>
+
+        <div class="age-gate-actions">
+            <button id="btn-yes" class="btn btn-primary"
+                >Sì, ho più di 18 anni</button
+            >
+            <button id="btn-no" class="btn btn-secondary">No, non li ho</button>
+        </div>
+
+        <p class="error-msg" id="age-error" style="display: none;">
+            Ci dispiace, ma non puoi accedere al sito.
+        </p>
+    </div>
+</div>
+
+<style lang="scss">
+    .age-gate-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+
+        &.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    }
+
+    .age-gate-modal {
+        background: var(--color-bg-alt);
+        padding: 3rem;
+        border-radius: 12px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        border-top: 5px solid var(--color-primary);
+
+        h2 {
+            color: var(--color-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        p {
+            color: var(--color-text-light);
+            margin-bottom: 2rem;
+        }
+    }
+
+    .icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+        background: var(--color-bg); // Placeholder shape
+        border-radius: 50%;
+    }
+
+    .age-gate-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap; /* Allows stacking on very small screens */
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex: 1 1 auto; /* Grow to fill space consistently */
+        min-width: 140px;
+
+        &.btn-primary {
+            background-color: var(--color-primary);
+            color: #fff;
+
+            &:hover {
+                background-color: var(--color-primary-dark);
+                transform: translateY(-2px);
+            }
+        }
+
+        &.btn-secondary {
+            background-color: #eee;
+            color: var(--color-text);
+
+            &:hover {
+                background-color: #ddd;
+            }
+        }
+    }
+
+    .error-msg {
+        color: #d32f2f !important;
+        margin-top: 1.5rem;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    // Script lato client per la gestione via localStorage
+    document.addEventListener("DOMContentLoaded", () => {
+        const ageGate = document.getElementById("age-gate");
+        const btnYes = document.getElementById("btn-yes");
+        const btnNo = document.getElementById("btn-no");
+        const errorMsg = document.getElementById("age-error");
+
+        // Controlla se il bot è Google; per la SEO spesso è saggio non mostrare/bloccare
+        const isBot =
+            /bot|google|baidu|bing|msn|duckduckbot|teoma|slurp|yandex/i.test(
+                navigator.userAgent,
+            );
+
+        const hasConfirmedAge =
+            localStorage.getItem("willi_age_verified") === "true";
+
+        if (!hasConfirmedAge && !isBot) {
+            ageGate?.classList.add("active");
+            document.body.style.overflow = "hidden"; // Evita scroll sottostante
+        }
+
+        if (btnYes) {
+            btnYes.addEventListener("click", () => {
+                localStorage.setItem("willi_age_verified", "true");
+                ageGate?.classList.remove("active");
+                document.body.style.overflow = "auto"; // Ripristina scroll
+            });
+        }
+
+        if (btnNo) {
+            btnNo.addEventListener("click", () => {
+                if (errorMsg) errorMsg.style.display = "block";
+            });
+        }
+    });
+</script>
