@@ -27,10 +27,11 @@
   $: styles = [...new Set(initialBeers.map(b => b.data.style))].sort();
   $: countries = [...new Set(initialBeers.map(b => b.data.country))].sort();
   $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
+  $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
   // Trova massimo e minimo basandosi sui dati reali (di fallback usa 0 e 15 se non ci sono birre)
-  $: actualMinAbv = initialBeers.length > 0 ? Math.min(...initialBeers.map(b => b.data.abv)) : 0;
-  $: actualMaxAbv = initialBeers.length > 0 ? Math.max(...initialBeers.map(b => b.data.abv)) : 15;
+  $: actualMinAbv = abvs.length > 0 ? abvs[0] : 0;
+  $: actualMaxAbv = abvs.length > 0 ? abvs[abvs.length - 1] : 15;
 
   // Stati per i filtri selezionati
   let selectedBrand = '';
@@ -159,8 +160,21 @@
         min={actualMinAbv} 
         max={actualMaxAbv} 
         step="0.1" 
+        list="abv-ticks"
         bind:value={maxAbv} 
+        on:change={(e) => {
+          // Quando l'utente rilascia lo slider, trova il valore reale più vicino nell'array abvs
+          const val = parseFloat(e.currentTarget.value);
+          const closest = abvs.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
+          maxAbv = closest;
+        }}
       />
+      <datalist id="abv-ticks">
+        {#each abvs as abv}
+          <option value={abv}></option>
+        {/each}
+      </datalist>
+
       <div class="range-labels" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 5px;">
         <span>{actualMinAbv}%</span>
         <span>{actualMaxAbv}%</span>
