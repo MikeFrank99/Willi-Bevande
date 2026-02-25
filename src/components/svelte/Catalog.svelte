@@ -32,27 +32,27 @@
 
   // Calcolo dei valori univoci e dinamici per le opzioni dei field <select> a cascata
   // Filtra le opzioni per mostrare SOLO quelle compatibili (nasconde quelle con count 0)
-  $: brands = [...new Set(beersForBrand.map(b => b.data.brand))]
+  $: brands = [...new Set(initialBeers.map(b => b.data.brand))]
     .sort()
     .map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }))
     .filter(b => b.count > 0);
   
-  $: styles = [...new Set(beersForStyle.map(b => b.data.style))]
+  $: styles = [...new Set(initialBeers.map(b => b.data.style))]
     .sort()
     .map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }))
     .filter(s => s.count > 0);
   
-  $: colors = [...new Set(beersForColor.map(b => b.data.color))]
+  $: colors = [...new Set(initialBeers.map(b => b.data.color))]
     .sort()
     .map(val => ({ name: val, count: beersForColor.filter(b => b.data.color === val).length }))
     .filter(c => c.count > 0);
   
-  $: countries = [...new Set(beersForCountry.map(b => b.data.country))]
+  $: countries = [...new Set(initialBeers.map(b => b.data.country))]
     .sort()
     .map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }))
     .filter(c => c.count > 0);
   
-  $: formats = [...new Set(beersForFormat.flatMap(b => b.data.format))]
+  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))]
     .sort()
     .map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }))
     .filter(f => f.count > 0);
@@ -79,13 +79,36 @@
     // Aggiorniamo maxAbv col valore reale appena il componente è montato
     maxAbv = actualMaxAbv;
 
-    // 1. Legge parametri URL al caricamento
+    // 1. Legge parametri URL al caricamento validando i dati per evitare filtri obsoleti
     const params = new URLSearchParams(window.location.search);
-    if (params.has('brand')) selectedBrand = params.get('brand') || '';
-    if (params.has('style')) selectedStyle = params.get('style') || '';
-    if (params.has('color')) selectedColor = params.get('color') || '';
-    if (params.has('country')) selectedCountry = params.get('country') || '';
-    if (params.has('format')) selectedFormat = params.get('format') || '';
+    
+    // Estrai i set di valori ammessi
+    const validBrands = new Set(initialBeers.map(b => b.data.brand));
+    const validStyles = new Set(initialBeers.map(b => b.data.style));
+    const validColors = new Set(initialBeers.map(b => b.data.color));
+    const validCountries = new Set(initialBeers.map(b => b.data.country));
+    const validFormats = new Set(initialBeers.flatMap(b => b.data.format));
+
+    if (params.has('brand')) {
+      const b = params.get('brand') || '';
+      selectedBrand = validBrands.has(b) ? b : '';
+    }
+    if (params.has('style')) {
+      const s = params.get('style') || '';
+      selectedStyle = validStyles.has(s) ? s : '';
+    }
+    if (params.has('color')) {
+      const c = params.get('color') || '';
+      selectedColor = validColors.has(c) ? c : '';
+    }
+    if (params.has('country')) {
+      const c = params.get('country') || '';
+      selectedCountry = validCountries.has(c) ? c : '';
+    }
+    if (params.has('format')) {
+      const f = params.get('format') || '';
+      selectedFormat = validFormats.has(f) ? f : '';
+    }
     if (params.has('maxAbv')) {
       const parsedAbv = parseFloat(params.get('maxAbv') || `${actualMaxAbv}`);
       if (!isNaN(parsedAbv)) maxAbv = parsedAbv;
