@@ -23,10 +23,10 @@
   export let initialBeers: BeerProp[];
 
   // Calcolo dei valori univoci per le opzioni dei field <select> e dinamici per slider
-  $: brands = [...new Set(initialBeers.map(b => b.data.brand))].sort();
-  $: styles = [...new Set(initialBeers.map(b => b.data.style))].sort();
-  $: countries = [...new Set(initialBeers.map(b => b.data.country))].sort();
-  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
+  $: brands = [...new Set(initialBeers.map(b => b.data.brand))].sort().map(val => ({ name: val, count: initialBeers.filter(b => b.data.brand === val).length }));
+  $: styles = [...new Set(initialBeers.map(b => b.data.style))].sort().map(val => ({ name: val, count: initialBeers.filter(b => b.data.style === val).length }));
+  $: countries = [...new Set(initialBeers.map(b => b.data.country))].sort().map(val => ({ name: val, count: initialBeers.filter(b => b.data.country === val).length }));
+  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))].sort().map(val => ({ name: val, count: initialBeers.filter(b => b.data.format.includes(val)).length }));
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
   // Trova massimo e minimo basandosi sui dati reali (di fallback usa 0 e 15 se non ci sono birre)
@@ -115,9 +115,9 @@
     <div class="filter-group">
       <label for="brand">Marca</label>
       <select id="brand" bind:value={selectedBrand}>
-        <option value="">Tutte le marche</option>
+        <option value="">Tutte le marche ({initialBeers.length})</option>
         {#each brands as b}
-          <option value={b}>{b}</option>
+          <option value={b.name}>{b.name} ({b.count})</option>
         {/each}
       </select>
     </div>
@@ -125,9 +125,9 @@
     <div class="filter-group">
       <label for="style">Stile</label>
       <select id="style" bind:value={selectedStyle}>
-        <option value="">Tutti gli stili</option>
+        <option value="">Tutti gli stili ({initialBeers.length})</option>
         {#each styles as s}
-          <option value={s}>{s}</option>
+          <option value={s.name}>{s.name} ({s.count})</option>
         {/each}
       </select>
     </div>
@@ -135,9 +135,9 @@
     <div class="filter-group">
       <label for="country">Nazione</label>
       <select id="country" bind:value={selectedCountry}>
-        <option value="">Tutte le nazioni</option>
+        <option value="">Tutte le nazioni ({initialBeers.length})</option>
         {#each countries as c}
-          <option value={c}>{c}</option>
+          <option value={c.name}>{c.name} ({c.count})</option>
         {/each}
       </select>
     </div>
@@ -147,7 +147,7 @@
       <select id="format" bind:value={selectedFormat}>
         <option value="">Tutti i formati</option>
         {#each formats as f}
-          <option value={f}>{f}</option>
+          <option value={f.name}>{f.name} ({f.count})</option>
         {/each}
       </select>
     </div>
