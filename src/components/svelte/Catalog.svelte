@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   const base = import.meta.env.BASE_URL;
   // Usiamo Type per definire i props passati da Astro
-  export let initialBeers: Array<{
+  type BeerProp = {
     id: string;
     slug: string;
     body: string;
@@ -16,7 +18,9 @@
       image: string;
       description: string;
     };
-  }>;
+  };
+
+  export let initialBeers: BeerProp[];
 
   // Stati per i filtri selezionati
   let selectedBrand = '';
@@ -24,6 +28,49 @@
   let selectedCountry = '';
   let selectedFormat = '';
   let maxAbv = 15;
+
+  // Variabile per evitare loop infiniti durante il primo caricamento
+  let isInitializing = true;
+
+  onMount(() => {
+    // 1. Legge parametri URL al caricamento
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('brand')) selectedBrand = params.get('brand') || '';
+    if (params.has('style')) selectedStyle = params.get('style') || '';
+    if (params.has('country')) selectedCountry = params.get('country') || '';
+    if (params.has('format')) selectedFormat = params.get('format') || '';
+    if (params.has('maxAbv')) {
+      const parsedAbv = parseFloat(params.get('maxAbv') || '15');
+      if (!isNaN(parsedAbv)) maxAbv = parsedAbv;
+    }
+    
+    // Fine inizializzazione, abilita la reattività dell'URL
+    isInitializing = false;
+  });
+
+  // 2. Scrive all'URL quando i filtri cambiano
+  $: {
+    if (!isInitializing && typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      
+      if (selectedBrand) url.searchParams.set('brand', selectedBrand);
+      else url.searchParams.delete('brand');
+
+      if (selectedStyle) url.searchParams.set('style', selectedStyle);
+      else url.searchParams.delete('style');
+
+      if (selectedCountry) url.searchParams.set('country', selectedCountry);
+      else url.searchParams.delete('country');
+
+      if (selectedFormat) url.searchParams.set('format', selectedFormat);
+      else url.searchParams.delete('format');
+
+      if (maxAbv < 15) url.searchParams.set('maxAbv', maxAbv.toString());
+      else url.searchParams.delete('maxAbv');
+
+      window.history.replaceState(null, '', url.toString());
+    }
+  }
 
   // Calcolo dei valori univoci per le opzioni dei field <select>
   $: brands = [...new Set(initialBeers.map(b => b.data.brand))].sort();

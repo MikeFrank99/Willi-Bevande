@@ -24,8 +24,44 @@ const { Content } = await beer.render();
 >
     <article class="beer-detail container">
         <div class="back-link">
-            <a href={`${base}catalogo/`}>← Torna al Catalogo</a>
+            <a href={`${base}catalogo/`} id="back-btn">← Torna al Catalogo</a>
         </div>
+
+        <script>
+            // Script client-side per tentare di usare history.back() e preservare i filtri URL
+            document.addEventListener("astro:page-load", () => {
+                const backBtn = document.getElementById("back-btn");
+                if (backBtn) {
+                    backBtn.addEventListener("click", (e) => {
+                        // Se c'è della history nella sessione corrente che non appartiene ad un altro sito
+                        if (
+                            window.history.length > 1 &&
+                            document.referrer.includes(window.location.host)
+                        ) {
+                            e.preventDefault();
+                            window.history.back();
+                        }
+                        // Altrimenti il link funzionerà col normale href come fallback
+                    });
+                }
+            });
+
+            // Per gestire casi senza View Transitions abilitate
+            document.addEventListener("DOMContentLoaded", () => {
+                const backBtn = document.getElementById("back-btn");
+                if (backBtn && !(window as any).Astro) {
+                    backBtn.addEventListener("click", (e) => {
+                        if (
+                            window.history.length > 1 &&
+                            document.referrer.includes(window.location.host)
+                        ) {
+                            e.preventDefault();
+                            window.history.back();
+                        }
+                    });
+                }
+            });
+        </script>
 
         <div class="product-layout">
             <!-- Image Section -->
