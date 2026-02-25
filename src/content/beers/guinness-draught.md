@@ -2,6 +2,7 @@
 title: "Guinness Draught"
 brand: "Guinness"
 style: "Stout"
+color: "Scura"
 format: ["Fusto 30L"]
 abv: 4.2
 country: "Irlanda"

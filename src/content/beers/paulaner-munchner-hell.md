@@ -2,6 +2,7 @@
 title: "Paulaner Münchner Hell"
 brand: "Paulaner"
 style: "Helles"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 50cl"]
 abv: 4.9
 country: "Germania (Baviera)"

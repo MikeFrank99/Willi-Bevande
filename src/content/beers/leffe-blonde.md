@@ -2,6 +2,7 @@
 title: "Leffe Blonde"
 brand: "Leffe"
 style: "Abbey Blonde"
+color: "Bionda"
 format: ["Fusto 30L", "Bottiglia 33cl"]
 abv: 6.6
 country: "Belgio"

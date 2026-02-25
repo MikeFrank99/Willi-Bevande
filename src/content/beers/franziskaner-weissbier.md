@@ -2,6 +2,7 @@
 title: "Franziskaner Weissbier"
 brand: "Franziskaner"
 style: "Weissbier"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 50cl"]
 abv: 5.0
 country: "Germania"

@@ -2,6 +2,7 @@
 title: "Menabrea Bionda"
 brand: "Menabrea"
 style: "Premium Lager"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 33cl", "Bottiglia 66cl"]
 abv: 4.8
 country: "Italia (Piemonte)"

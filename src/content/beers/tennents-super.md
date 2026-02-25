@@ -2,6 +2,7 @@
 title: "Tennent's Super"
 brand: "Tennent's"
 style: "Strong Lager"
+color: "Ambrata"
 format: ["Fusto 30L", "Bottiglia 33cl"]
 abv: 9.0
 country: "Scozia"

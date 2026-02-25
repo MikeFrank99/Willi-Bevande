@@ -2,6 +2,7 @@
 title: "Kozel Premium Lager"
 brand: "Kozel"
 style: "Czech Pilsner / Lager"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 50cl"]
 abv: 4.6
 country: "Repubblica Ceca"

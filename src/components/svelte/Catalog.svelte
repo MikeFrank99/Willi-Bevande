@@ -24,35 +24,38 @@
 
   // Sottoinsiemi reattivi incrociati: servono a calcolare le opzioni disponibili nei menu a tendina
   // escludendo il filtro della categoria in esame (per permettere all'utente di selezionare altre voci della stessa categoria)
-  $: beersForBrand = initialBeers.filter(beer => (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForStyle = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForCountry = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForFormat = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedCountry === '' || beer.data.country === selectedCountry) && (beer.data.abv <= maxAbv));
+  $: beersForBrand = initialBeers.filter(beer => (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
+  $: beersForStyle = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
+  $: beersForColor = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
+  $: beersForCountry = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
+  $: beersForFormat = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (beer.data.abv <= maxAbv));
 
   // Calcolo dei valori univoci e dinamici per le opzioni dei field <select> a cascata
-  $: brands = (() => {
-    let opts = [...new Set(beersForBrand.map(b => b.data.brand))].sort().map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }));
-    if (selectedBrand && !opts.find(o => o.name === selectedBrand)) opts.push({ name: selectedBrand, count: 0 });
-    return opts.sort((a,b) => a.name.localeCompare(b.name));
-  })();
+  // Filtra le opzioni per mostrare SOLO quelle compatibili (nasconde quelle con count 0)
+  $: brands = [...new Set(beersForBrand.map(b => b.data.brand))]
+    .sort()
+    .map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }))
+    .filter(b => b.count > 0);
   
-  $: styles = (() => {
-    let opts = [...new Set(beersForStyle.map(b => b.data.style))].sort().map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }));
-    if (selectedStyle && !opts.find(o => o.name === selectedStyle)) opts.push({ name: selectedStyle, count: 0 });
-    return opts.sort((a,b) => a.name.localeCompare(b.name));
-  })();
+  $: styles = [...new Set(beersForStyle.map(b => b.data.style))]
+    .sort()
+    .map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }))
+    .filter(s => s.count > 0);
   
-  $: countries = (() => {
-    let opts = [...new Set(beersForCountry.map(b => b.data.country))].sort().map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }));
-    if (selectedCountry && !opts.find(o => o.name === selectedCountry)) opts.push({ name: selectedCountry, count: 0 });
-    return opts.sort((a,b) => a.name.localeCompare(b.name));
-  })();
+  $: colors = [...new Set(beersForColor.map(b => b.data.color))]
+    .sort()
+    .map(val => ({ name: val, count: beersForColor.filter(b => b.data.color === val).length }))
+    .filter(c => c.count > 0);
   
-  $: formats = (() => {
-    let opts = [...new Set(beersForFormat.flatMap(b => b.data.format))].sort().map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }));
-    if (selectedFormat && !opts.find(o => o.name === selectedFormat)) opts.push({ name: selectedFormat, count: 0 });
-    return opts.sort((a,b) => a.name.localeCompare(b.name));
-  })();
+  $: countries = [...new Set(beersForCountry.map(b => b.data.country))]
+    .sort()
+    .map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }))
+    .filter(c => c.count > 0);
+  
+  $: formats = [...new Set(beersForFormat.flatMap(b => b.data.format))]
+    .sort()
+    .map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }))
+    .filter(f => f.count > 0);
   
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
@@ -63,6 +66,7 @@
   // Stati per i filtri selezionati
   let selectedBrand = '';
   let selectedStyle = '';
+  let selectedColor = '';
   let selectedCountry = '';
   let selectedFormat = '';
   // Inizializza temporaneamente, sovrascritto in onMount o reattivamente
@@ -79,6 +83,7 @@
     const params = new URLSearchParams(window.location.search);
     if (params.has('brand')) selectedBrand = params.get('brand') || '';
     if (params.has('style')) selectedStyle = params.get('style') || '';
+    if (params.has('color')) selectedColor = params.get('color') || '';
     if (params.has('country')) selectedCountry = params.get('country') || '';
     if (params.has('format')) selectedFormat = params.get('format') || '';
     if (params.has('maxAbv')) {
@@ -101,6 +106,9 @@
       if (selectedStyle) url.searchParams.set('style', selectedStyle);
       else url.searchParams.delete('style');
 
+      if (selectedColor) url.searchParams.set('color', selectedColor);
+      else url.searchParams.delete('color');
+
       if (selectedCountry) url.searchParams.set('country', selectedCountry);
       else url.searchParams.delete('country');
 
@@ -118,16 +126,18 @@
   $: filteredBeers = initialBeers.filter(beer => {
     const matchBrand = selectedBrand === '' || beer.data.brand === selectedBrand;
     const matchStyle = selectedStyle === '' || beer.data.style === selectedStyle;
+    const matchColor = selectedColor === '' || beer.data.color === selectedColor;
     const matchCountry = selectedCountry === '' || beer.data.country === selectedCountry;
     const matchFormat = selectedFormat === '' || beer.data.format.includes(selectedFormat);
     const matchAbv = beer.data.abv <= maxAbv;
 
-    return matchBrand && matchStyle && matchCountry && matchFormat && matchAbv;
+    return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAbv;
   });
 
   function resetFilters() {
     selectedBrand = '';
     selectedStyle = '';
+    selectedColor = '';
     selectedCountry = '';
     selectedFormat = '';
     maxAbv = actualMaxAbv;
@@ -143,6 +153,10 @@
       <label for="brand">Marca</label>
       <select id="brand" bind:value={selectedBrand}>
         <option value="">Tutte le marche ({beersForBrand.length})</option>
+        {#if selectedBrand && !brands.find(b => b.name === selectedBrand)}
+           <!-- Svelte auto-resets the `<select>` if the bound value isn't an option. We keep a hidden anchor so it survives cascading state changes. -->
+           <option value={selectedBrand} hidden>{selectedBrand}</option>
+        {/if}
         {#each brands as b}
           <option value={b.name}>{b.name} ({b.count})</option>
         {/each}
@@ -153,8 +167,24 @@
       <label for="style">Stile</label>
       <select id="style" bind:value={selectedStyle}>
         <option value="">Tutti gli stili ({beersForStyle.length})</option>
+        {#if selectedStyle && !styles.find(s => s.name === selectedStyle)}
+           <option value={selectedStyle} hidden>{selectedStyle}</option>
+        {/if}
         {#each styles as s}
           <option value={s.name}>{s.name} ({s.count})</option>
+        {/each}
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="color">Colore</label>
+      <select id="color" bind:value={selectedColor}>
+        <option value="">Tutti i colori ({beersForColor.length})</option>
+        {#if selectedColor && !colors.find(c => c.name === selectedColor)}
+           <option value={selectedColor} hidden>{selectedColor}</option>
+        {/if}
+        {#each colors as c}
+          <option value={c.name}>{c.name} ({c.count})</option>
         {/each}
       </select>
     </div>
@@ -163,6 +193,9 @@
       <label for="country">Nazione</label>
       <select id="country" bind:value={selectedCountry}>
         <option value="">Tutte le nazioni ({beersForCountry.length})</option>
+        {#if selectedCountry && !countries.find(c => c.name === selectedCountry)}
+           <option value={selectedCountry} hidden>{selectedCountry}</option>
+        {/if}
         {#each countries as c}
           <option value={c.name}>{c.name} ({c.count})</option>
         {/each}
@@ -173,6 +206,9 @@
       <label for="format">Formato</label>
       <select id="format" bind:value={selectedFormat}>
         <option value="">Tutti i formati ({beersForFormat.length})</option>
+        {#if selectedFormat && !formats.find(f => f.name === selectedFormat)}
+           <option value={selectedFormat} hidden>{selectedFormat}</option>
+        {/if}
         {#each formats as f}
           <option value={f.name}>{f.name} ({f.count})</option>
         {/each}

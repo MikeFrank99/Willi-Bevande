@@ -2,6 +2,7 @@
 title: "Forst Kronen"
 brand: "Forst"
 style: "Premium Lager"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 33cl"]
 abv: 5.2
 country: "Italia (Alto Adige)"

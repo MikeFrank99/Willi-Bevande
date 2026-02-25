@@ -6,6 +6,7 @@ const beersCollection = defineCollection({
     title: z.string(),
     brand: z.string(),
     style: z.string(),
+    color: z.string(),
     format: z.array(z.string()),
     abv: z.number(),
     country: z.string(),

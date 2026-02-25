@@ -2,6 +2,7 @@
 title: "Ichnusa Non Filtrata"
 brand: "Ichnusa"
 style: "Lager Non Filtrata"
+color: "Chiara"
 format: ["Fusto 20L", "Bottiglia 33cl", "Bottiglia 50cl"]
 abv: 5.0
 country: "Italia (Sardegna)"

@@ -2,6 +2,7 @@
 title: "Ichnusa Classica"
 brand: "Ichnusa"
 style: "Pale Lager"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 33cl", "Bottiglia 66cl"]
 abv: 4.7
 country: "Italia (Sardegna)"

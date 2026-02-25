@@ -2,6 +2,7 @@
 title: "La Chouffe Blonde"
 brand: "Brasserie d'Achouffe"
 style: "Belgian Strong Golden Ale"
+color: "Bionda"
 format: ["Fusto 20L", "Bottiglia 33cl"]
 abv: 8.0
 country: "Belgio"

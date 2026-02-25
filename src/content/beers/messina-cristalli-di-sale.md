@@ -2,6 +2,7 @@
 title: "Messina Cristalli di Sale"
 brand: "Messina"
 style: "Lager Non Filtrata Speciale"
+color: "Chiara"
 format: ["Fusto 20L", "Bottiglia 33cl", "Bottiglia 50cl"]
 abv: 5.0
 country: "Italia (Sicilia)"

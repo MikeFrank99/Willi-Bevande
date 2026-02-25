@@ -2,6 +2,7 @@
 title: "BrewDog Punk IPA"
 brand: "BrewDog"
 style: "India Pale Ale (IPA)"
+color: "Ambrata"
 format: ["Fusto 20L", "Lattina 33cl", "Bottiglia 33cl"]
 abv: 5.4
 country: "Scozia"

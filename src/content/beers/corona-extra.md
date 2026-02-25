@@ -2,6 +2,7 @@
 title: "Corona Extra"
 brand: "Corona"
 style: "Pale American Lager"
+color: "Chiara"
 format: ["Bottiglia 33cl", "Bottiglia 35.5cl"]
 abv: 4.5
 country: "Messico"

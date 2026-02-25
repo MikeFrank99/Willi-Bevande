@@ -2,6 +2,7 @@
 title: "Peroni Nastro Azzurro"
 brand: "Peroni"
 style: "Lager Premium"
+color: "Chiara"
 format: ["Fusto 30L", "Bottiglia 33cl", "Bottiglia 66cl"]
 abv: 5.1
 country: "Italia"

@@ -2,6 +2,7 @@
 title: "Chimay Red (Première)"
 brand: "Chimay"
 style: "Dubbel Trappista"
+color: "Rossa"
 format: ["Fusto 20L", "Bottiglia 33cl", "Bottiglia 75cl"]
 abv: 7.0
 country: "Belgio"

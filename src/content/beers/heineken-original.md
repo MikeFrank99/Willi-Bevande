@@ -2,6 +2,7 @@
 title: "Heineken Original"
 brand: "Heineken"
 style: "Pilsner"
+color: "Chiara"
 format: ["Fusto 20L", "Fusto 30L", "Bottiglia 33cl"]
 abv: 5.0
 country: "Olanda"
