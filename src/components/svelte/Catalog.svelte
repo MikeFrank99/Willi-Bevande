@@ -30,10 +30,30 @@
   $: beersForFormat = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedCountry === '' || beer.data.country === selectedCountry) && (beer.data.abv <= maxAbv));
 
   // Calcolo dei valori univoci e dinamici per le opzioni dei field <select> a cascata
-  $: brands = [...new Set(beersForBrand.map(b => b.data.brand))].sort().map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }));
-  $: styles = [...new Set(beersForStyle.map(b => b.data.style))].sort().map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }));
-  $: countries = [...new Set(beersForCountry.map(b => b.data.country))].sort().map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }));
-  $: formats = [...new Set(beersForFormat.flatMap(b => b.data.format))].sort().map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }));
+  $: brands = (() => {
+    let opts = [...new Set(beersForBrand.map(b => b.data.brand))].sort().map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }));
+    if (selectedBrand && !opts.find(o => o.name === selectedBrand)) opts.push({ name: selectedBrand, count: 0 });
+    return opts.sort((a,b) => a.name.localeCompare(b.name));
+  })();
+  
+  $: styles = (() => {
+    let opts = [...new Set(beersForStyle.map(b => b.data.style))].sort().map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }));
+    if (selectedStyle && !opts.find(o => o.name === selectedStyle)) opts.push({ name: selectedStyle, count: 0 });
+    return opts.sort((a,b) => a.name.localeCompare(b.name));
+  })();
+  
+  $: countries = (() => {
+    let opts = [...new Set(beersForCountry.map(b => b.data.country))].sort().map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }));
+    if (selectedCountry && !opts.find(o => o.name === selectedCountry)) opts.push({ name: selectedCountry, count: 0 });
+    return opts.sort((a,b) => a.name.localeCompare(b.name));
+  })();
+  
+  $: formats = (() => {
+    let opts = [...new Set(beersForFormat.flatMap(b => b.data.format))].sort().map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }));
+    if (selectedFormat && !opts.find(o => o.name === selectedFormat)) opts.push({ name: selectedFormat, count: 0 });
+    return opts.sort((a,b) => a.name.localeCompare(b.name));
+  })();
+  
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
   // Trova massimo e minimo basandosi sui dati reali (di fallback usa 0 e 15 se non ci sono birre)
