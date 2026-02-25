@@ -270,6 +270,7 @@
               
               <div class="tags">
                 <span class="tag">{beer.data.style}</span>
+                <span class="tag">{beer.data.color}</span>
                 <span class="tag">{beer.data.abv}%</span>
               </div>
             </div>
