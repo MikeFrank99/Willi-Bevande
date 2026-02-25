@@ -1,13 +1,13 @@
 ---
 title: "Ichnusa Classica"
 brand: "Ichnusa"
-style: "Pale Lager"
-color: "Chiara"
-format: ["Fusto 30L", "Bottiglia 33cl", "Bottiglia 66cl"]
+style: "Lager"
+color: "Bionda"
+format: ["Fusto 20L","Bottiglia 33cl","Bottiglia 66cl"]
 abv: 4.7
-country: "Italia (Sardegna)"
-image: "/placeholder-ichnusa-classica.jpg"
-description: "Il sapore della tradizione sarda in una bionda limpida ed equilibrata."
+country: "Italia"
+image: "/images/beers/ichnusa-classica.jpg"
+description: "La Ichnusa Classica è una birra bionda in stile Lager prodotta da Ichnusa. Perfetta per ogni occasione."
 ---
 
-Sorella limpidissima e filtrata. Unisce profumi caldi dei cereali a note più fresche e lupolate che risaltano nel retrogusto. Compagna ideale delle feste all'aperto.
+La **Ichnusa Classica** è un classico esempio dello stile Lager, offrendo un equilibrio perfetto e un profilo distintivo che la rende inconfondibile nel suo genere come esponente del catalogo **Ichnusa**.

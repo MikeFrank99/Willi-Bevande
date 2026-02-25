@@ -1,13 +1,13 @@
 ---
 title: "Heineken Original"
 brand: "Heineken"
-style: "Pilsner"
+style: "Lager"
 color: "Chiara"
-format: ["Fusto 20L", "Fusto 30L", "Bottiglia 33cl"]
-abv: 5.0
+format: ["Fusto 30L","Bottiglia 33cl","Bottiglia 66cl"]
+abv: 5
 country: "Olanda"
-image: "/placeholder-heineken.jpg"
-description: "Premium Pilsner olandese diffusa globalmente, bilanciata e trasversale."
+image: "/images/beers/heineken-original.jpg"
+description: "La Heineken Original è una birra chiara in stile Lager prodotta da Heineken. Perfetta per ogni occasione."
 ---
 
-Gusto amaro e fresco e sentori delicatamente fruttati forniti dallo speciale Lievito A esclusivo. Ottima carbonazione che dona un perlage perfetto in spina.
+La **Heineken Original** è un classico esempio dello stile Lager, offrendo un equilibrio perfetto e un profilo distintivo che la rende inconfondibile nel suo genere come esponente del catalogo **Heineken**.

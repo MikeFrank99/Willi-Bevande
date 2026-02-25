@@ -1,13 +1,13 @@
 ---
 title: "Leffe Blonde"
 brand: "Leffe"
-style: "Abbey Blonde"
+style: "Belgian Ale"
 color: "Bionda"
-format: ["Fusto 30L", "Bottiglia 33cl"]
+format: ["Fusto 20L","Bottiglia 33cl","Bottiglia 75cl"]
 abv: 6.6
 country: "Belgio"
-image: "/placeholder-leffe.jpg"
-description: "Autentica birra d'abbazia belga dal colore dorato e sapore avvolgente e maltato."
+image: "/images/beers/leffe-blonde.jpg"
+description: "La Leffe Blonde è una birra bionda in stile Belgian Ale prodotta da Leffe. Perfetta per ogni occasione."
 ---
 
-Il sapore è dolce e delicatamente fruttato con sentori di vaniglia e chiodi di garofano, chiudendosi con un retrogusto secco. Si sposa perfettamente con formaggi e salumi dolci.
+La **Leffe Blonde** è un classico esempio dello stile Belgian Ale, offrendo un equilibrio perfetto e un profilo distintivo che la rende inconfondibile nel suo genere come esponente del catalogo **Leffe**.
