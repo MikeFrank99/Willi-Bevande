@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout
@@ -20,7 +21,7 @@ import Layout from "../layouts/Layout.astro";
 				etichette internazionali più esclusive.
 			</p>
 			<div class="actions">
-				<a href="/catalogo" class="btn btn-primary btn-large"
+				<a href={`${base}/catalogo`} class="btn btn-primary btn-large"
 					>Scopri il Catalogo</a
 				>
 			</div>
@@ -57,15 +58,17 @@ import Layout from "../layouts/Layout.astro";
 			<div class="promo-text">
 				<h2>
 					Impianti Spina in <span class="highlight"
-						>Comodato d'Uso</span>
+						>Comodato d'Uso</span
+					>
 				</h2>
 				<p>
 					La soluzione completa "chiavi in mano" per servire la birra
 					perfetta nel tuo locale. Fornitura, installazione e
 					manutenzione gratuite a fronte di un accordo di fornitura.
 				</p>
-				<a href="/servizi/impianti-spina" class="btn btn-outline"
-					>Scopri il Servizio</a
+				<a
+					href={`${base}/servizi/impianti-spina`}
+					class="btn btn-outline">Scopri il Servizio</a
 				>
 			</div>
 		</div>

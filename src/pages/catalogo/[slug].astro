@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+const base = import.meta.env.BASE_URL;
 
 // Funzione Astro obbligatoria per generare percorsi statici da params dinamici
 export async function getStaticPaths() {
@@ -23,7 +24,7 @@ const { Content } = await beer.render();
 >
     <article class="beer-detail container">
         <div class="back-link">
-            <a href="/catalogo">← Torna al Catalogo</a>
+            <a href={`${base}catalogo`}>← Torna al Catalogo</a>
         </div>
 
         <div class="product-layout">

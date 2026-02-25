@@ -1,4 +1,5 @@
 <script lang="ts">
+  const base = import.meta.env.BASE_URL;
   // Usiamo Type per definire i props passati da Astro
   export let initialBeers: Array<{
     id: string;
@@ -116,7 +117,7 @@
     {:else}
       <div class="grid">
         {#each filteredBeers as beer (beer.id)}
-          <a href="/catalogo/{beer.slug}" class="beer-card">
+          <a href="{base}catalogo/{beer.slug}" class="beer-card">
             <div class="img-wrapper">
               <div class="placeholder-img" title="Immagine di {beer.data.title}">🍺</div>
             </div>
