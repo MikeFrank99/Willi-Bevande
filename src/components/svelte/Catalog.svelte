@@ -117,7 +117,7 @@
     {:else}
       <div class="grid">
         {#each filteredBeers as beer (beer.id)}
-          <a href="{base}catalogo/{beer.slug}" class="beer-card">
+          <a href="{base}catalogo/{beer.slug}/" class="beer-card">
             <div class="img-wrapper">
               <div class="placeholder-img" title="Immagine di {beer.data.title}">🍺</div>
             </div>

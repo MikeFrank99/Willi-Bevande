@@ -7,5 +7,6 @@ import svelte from '@astrojs/svelte';
 export default defineConfig({
   site: 'https://MikeFrank99.github.io',
   base: '/Willi-Bevande',
+  trailingSlash: 'always',
   integrations: [svelte()]
 });
