@@ -22,17 +22,31 @@
 
   export let initialBeers: BeerProp[];
 
+  // Calcolo dei valori univoci per le opzioni dei field <select> e dinamici per slider
+  $: brands = [...new Set(initialBeers.map(b => b.data.brand))].sort();
+  $: styles = [...new Set(initialBeers.map(b => b.data.style))].sort();
+  $: countries = [...new Set(initialBeers.map(b => b.data.country))].sort();
+  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
+  
+  // Trova massimo e minimo basandosi sui dati reali (di fallback usa 0 e 15 se non ci sono birre)
+  $: actualMinAbv = initialBeers.length > 0 ? Math.min(...initialBeers.map(b => b.data.abv)) : 0;
+  $: actualMaxAbv = initialBeers.length > 0 ? Math.max(...initialBeers.map(b => b.data.abv)) : 15;
+
   // Stati per i filtri selezionati
   let selectedBrand = '';
   let selectedStyle = '';
   let selectedCountry = '';
   let selectedFormat = '';
+  // Inizializza temporaneamente, sovrascritto in onMount o reattivamente
   let maxAbv = 15;
 
   // Variabile per evitare loop infiniti durante il primo caricamento
   let isInitializing = true;
 
   onMount(() => {
+    // Aggiorniamo maxAbv col valore reale appena il componente è montato
+    maxAbv = actualMaxAbv;
+
     // 1. Legge parametri URL al caricamento
     const params = new URLSearchParams(window.location.search);
     if (params.has('brand')) selectedBrand = params.get('brand') || '';
@@ -40,7 +54,7 @@
     if (params.has('country')) selectedCountry = params.get('country') || '';
     if (params.has('format')) selectedFormat = params.get('format') || '';
     if (params.has('maxAbv')) {
-      const parsedAbv = parseFloat(params.get('maxAbv') || '15');
+      const parsedAbv = parseFloat(params.get('maxAbv') || `${actualMaxAbv}`);
       if (!isNaN(parsedAbv)) maxAbv = parsedAbv;
     }
     
@@ -65,18 +79,12 @@
       if (selectedFormat) url.searchParams.set('format', selectedFormat);
       else url.searchParams.delete('format');
 
-      if (maxAbv < 15) url.searchParams.set('maxAbv', maxAbv.toString());
+      if (maxAbv < actualMaxAbv) url.searchParams.set('maxAbv', maxAbv.toString());
       else url.searchParams.delete('maxAbv');
 
       window.history.replaceState(null, '', url.toString());
     }
   }
-
-  // Calcolo dei valori univoci per le opzioni dei field <select>
-  $: brands = [...new Set(initialBeers.map(b => b.data.brand))].sort();
-  $: styles = [...new Set(initialBeers.map(b => b.data.style))].sort();
-  $: countries = [...new Set(initialBeers.map(b => b.data.country))].sort();
-  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
 
   // Array derivato reattivo: se le variabili let di sopra cambiano, filteredBeers si aggiorna istantaneamente
   $: filteredBeers = initialBeers.filter(beer => {
@@ -94,7 +102,7 @@
     selectedStyle = '';
     selectedCountry = '';
     selectedFormat = '';
-    maxAbv = 15;
+    maxAbv = actualMaxAbv;
   }
 </script>
 
@@ -143,9 +151,20 @@
       </select>
     </div>
 
-    <div class="filter-group">
-      <label for="abv">Gradazione Mas. ({maxAbv}%)</label>
-      <input type="range" id="abv" min="0" max="15" step="0.5" bind:value={maxAbv}>
+    <div class="filter-group slider-group">
+      <label for="abv">Gradazione Massima: {maxAbv}%</label>
+      <input 
+        type="range" 
+        id="abv" 
+        min={actualMinAbv} 
+        max={actualMaxAbv} 
+        step="0.1" 
+        bind:value={maxAbv} 
+      />
+      <div class="range-labels" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 5px;">
+        <span>{actualMinAbv}%</span>
+        <span>{actualMaxAbv}%</span>
+      </div>
     </div>
 
     <button class="btn-reset" on:click={resetFilters}>Azzera Filtri</button>
