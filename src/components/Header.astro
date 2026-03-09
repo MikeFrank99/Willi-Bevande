@@ -1,19 +1,31 @@
 ---
 import "../styles/global.scss";
+import { Image } from "astro:assets";
+import logo from "../assets/logos/Willi_Logo.svg";
 const base = import.meta.env.BASE_URL;
 ---
 
 <header class="main-header">
     <div class="container header-content">
-        <a href={base} class="logo">
-            <span class="willi">Willi</span>
-            <span class="bevande">Bevande</span>
-        </a>
-
-        <nav class="main-nav">
+        <nav class="main-nav nav-left">
             <ul>
                 <li><a href={base}>Home</a></li>
-                <li><a href={`${base}catalogo/`}>Catalogo Birre</a></li>
+                <li><a href={`${base}catalogo/`}>Catalogo</a></li>
+            </ul>
+        </nav>
+
+        <a href={base} class="logo">
+            <Image
+                src={logo}
+                alt="Willi Bevande Logo"
+                width={300}
+                height={150}
+                loading="eager"
+            />
+        </a>
+
+        <nav class="main-nav nav-right">
+            <ul>
                 <li>
                     <a href={`${base}servizi/impianti-spina/`}>Impianti Spina</a
                     >
@@ -25,76 +37,100 @@ const base = import.meta.env.BASE_URL;
 
 <style lang="scss">
     .main-header {
-        background-color: var(--color-secondary);
-        color: var(--color-bg-alt);
-        padding: 1rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        color: var(--color-text);
+        height: 80px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         position: sticky;
         top: 0;
         z-index: 100;
+        border-bottom: 1px solid #eee;
 
         .header-content {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
+            gap: 2rem;
+            height: 100%;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--color-bg-alt);
-            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            width: 250px;
+            height: 100%;
 
-            .willi {
-                color: var(--color-bg-alt);
-            }
-            .bevande {
-                color: var(--color-primary);
+            img {
+                height: 160px; /* Slightly taller for even more impact */
+                width: auto;
+                position: absolute;
+                top: 0;
+                transition: transform 0.3s ease;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
             }
 
-            &:hover {
-                opacity: 0.9;
+            &:hover img {
+                transform: scale(1.05);
             }
         }
 
-        .main-nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-            margin: 0;
-            padding: 0;
+        .main-nav {
+            ul {
+                list-style: none;
+                display: flex;
+                gap: 2rem;
+                margin: 0;
+                padding: 0;
 
-            li a {
-                color: var(--color-bg-alt);
-                text-decoration: none;
-                font-weight: 500;
-                font-size: 1.1rem;
-                transition: color var(--transition-speed) ease;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                li a {
+                    color: var(--color-text);
+                    text-decoration: none;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    transition: color var(--transition-speed) ease;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
 
-                &:hover,
-                &:focus {
-                    color: var(--color-primary);
+                    &:hover,
+                    &:focus {
+                        color: var(--color-primary);
+                    }
                 }
+            }
+
+            &.nav-right ul {
+                justify-content: flex-end;
             }
         }
     }
 
     @media (max-width: 768px) {
-        .main-header .header-content {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-        }
+        .main-header {
+            padding: 1rem 0;
 
-        .main-nav ul {
-            justify-content: center;
-            gap: 1.5rem;
-            width: 100%;
-            flex-wrap: wrap;
+            .header-content {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-nav {
+                &.nav-left ul,
+                &.nav-right ul {
+                    justify-content: center;
+                }
+
+                ul {
+                    gap: 1.5rem;
+                    flex-wrap: wrap;
+                }
+            }
+
+            .logo img {
+                height: 50px;
+            }
         }
     }
 </style>

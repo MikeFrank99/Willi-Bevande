@@ -21,37 +21,19 @@ const pageDescription =
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-    <div class="catalog-header">
-        <div class="container">
-            <h1>Il Nostro Catalogo</h1>
-            <p>{pageDescription}</p>
-        </div>
-    </div>
-
-    <div class="container">
+    <div class="container-full section-padding">
         <Catalog client:load initialBeers={svelteBeers} />
     </div>
 </Layout>
 
 <style>
-    .catalog-header {
-        background-color: var(--color-secondary);
-        color: var(--color-bg-alt);
-        padding: 4rem 0 3rem 0;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .catalog-header h1 {
-        color: var(--color-bg-alt);
-        font-size: 2.8rem;
-        margin-bottom: 1rem;
-    }
-
-    .catalog-header p {
-        color: #ccc;
-        font-size: 1.2rem;
-        max-width: 600px;
+    .container-full {
+        width: 100%;
+        max-width: 1600px;
         margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-padding {
+        padding: 2rem 0;
     }
 </style>

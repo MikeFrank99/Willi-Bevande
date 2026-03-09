@@ -165,6 +165,21 @@
     selectedFormat = '';
     maxAbv = actualMaxAbv;
   }
+
+  function getBeerImage(beer: BeerProp) {
+    const style = beer.data.style.toLowerCase();
+    const color = beer.data.color.toLowerCase();
+    const title = beer.data.title.toLowerCase();
+
+    if (style.includes('rossa') || style.includes('red') || style.includes('stout') || style.includes('scura') || title.includes('sixtus')) {
+      return `${base}images/red_placeholder.png`;
+    }
+    if (style.includes('dark') || title.includes('stout')) {
+      return `${base}images/dark_placeholder.png`;
+    }
+    // Default to blonde
+    return `${base}images/blonde_placeholder.png`;
+  }
 </script>
 
 <div class="catalog-layout">
@@ -240,28 +255,32 @@
 
     <div class="filter-group slider-group">
       <label for="abv">Gradazione Massima: {maxAbv}%</label>
-      <input 
-        type="range" 
-        id="abv" 
-        min={actualMinAbv} 
-        max={actualMaxAbv} 
-        step="0.1" 
-        list="abv-ticks"
-        bind:value={maxAbv} 
-        on:change={(e) => {
-          // Quando l'utente rilascia lo slider, trova il valore reale più vicino nell'array abvs
-          const val = parseFloat(e.currentTarget.value);
-          const closest = abvs.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
-          maxAbv = closest;
-        }}
-      />
-      <datalist id="abv-ticks">
-        {#each abvs as abv}
-          <option value={abv}></option>
-        {/each}
-      </datalist>
+      <div class="range-container">
+        <input 
+          type="range" 
+          id="abv" 
+          min={actualMinAbv} 
+          max={actualMaxAbv} 
+          step="0.1" 
+          bind:value={maxAbv} 
+          style:background={`linear-gradient(to right, var(--color-primary) ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%, #eee ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%)`}
+          on:change={(e) => {
+            const val = parseFloat(e.currentTarget.value);
+            const closest = abvs.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
+            maxAbv = closest;
+          }}
+        />
+        <div class="custom-ticks">
+          {#each abvs as abv}
+            <div 
+              class="tick" 
+              style="left: {((abv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%"
+            ></div>
+          {/each}
+        </div>
+      </div>
 
-      <div class="range-labels" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 5px;">
+      <div class="range-labels">
         <span>{actualMinAbv}%</span>
         <span>{actualMaxAbv}%</span>
       </div>
@@ -285,7 +304,7 @@
         {#each filteredBeers as beer (beer.id)}
           <a href="{base}catalogo/{beer.slug}/" class="beer-card">
             <div class="img-wrapper">
-              <div class="placeholder-img" title="Immagine di {beer.data.title}">🍺</div>
+              <img src={getBeerImage(beer)} alt={beer.data.title} class="beer-img" />
             </div>
             <div class="content">
               <h4>{beer.data.title}</h4>
@@ -307,190 +326,361 @@
 <style lang="scss">
   .catalog-layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 3rem;
+    grid-template-columns: 240px 1fr;
+    gap: 4rem;
     align-items: start;
-    padding: 2rem 0;
+    padding: 3rem 0;
   }
 
   .filters-panel {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    background: transparent;
+    padding: 0;
     position: sticky;
-    top: 90px; // Considera l'header
+    top: 120px;
 
     h3 {
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #eee;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #999;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      border: none;
+      padding: 0;
     }
   }
 
   .filter-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 
     label {
       display: block;
       font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: #666;
     }
 
-    select, input[type="range"] {
+    select {
       width: 100%;
-      padding: 0.6rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      padding: 0.8rem 0;
+      border: none;
+      border-bottom: 1px solid #eee;
+      border-radius: 0;
       font-family: inherit;
-      background: #fafafa;
+      background: transparent;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: border-color 0.3s;
+
+      &:focus {
+        outline: none;
+        border-bottom-color: var(--color-primary);
+      }
     }
-    
-    select:focus {
+
+    .range-container {
+      position: relative;
+      width: 100%;
+      padding: 15px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
       outline: none;
-      border-color: #d4a373;
+      margin: 0;
+      cursor: pointer;
+      accent-color: var(--color-primary);
+      border-radius: 2px;
+      position: relative;
+      z-index: 2;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--color-primary);
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: transform 0.2s;
+      }
+
+      &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: var(--color-primary);
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: transform 0.2s;
+      }
+
+      &:active::-webkit-slider-thumb, &:active::-moz-range-thumb {
+        transform: scale(1.2);
+      }
     }
+
+    .custom-ticks {
+      position: absolute;
+      top: calc(50% + 14px); /* Posizionato sotto il cerchio (9px raggio + 5px spazio) */
+      left: 9px; 
+      right: 9px;
+      height: 6px;
+      pointer-events: none;
+      z-index: 1;
+
+      .tick {
+        position: absolute;
+        top: 0;
+        width: 1px;
+        height: 100%;
+        background: #ddd;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  .range-labels {
+    display: flex; 
+    justify-content: space-between; 
+    padding: 0 9px; /* Allinea i label con i segnalini estremi */
+    font-size: 0.8rem; 
+    color: #999; 
+    margin-top: 5px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
   .btn-reset {
     width: 100%;
-    padding: 0.8rem;
-    background: transparent;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 1rem;
+    background: #fcfcfc;
+    border: 1px solid #eee;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    font-weight: 700;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    margin-top: 1rem;
 
     &:hover {
-      background: #f0f0f0;
+      background: #fff;
+      border-color: var(--color-primary);
+      color: var(--color-primary);
     }
   }
 
   .results-info {
-    margin-bottom: 1.5rem;
-    color: #666;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .grid {
+       /* Almeno 3 per riga su desktop */
+       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+  }
+
+  @media (max-width: 1200px) and (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr); /* Enforce 3 columns on tablets */
+    }
   }
 
   .beer-card {
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    transition: all 0.3s ease;
+    text-decoration: none;
     display: flex;
     flex-direction: column;
-    text-decoration: none; // Reset <a href>
+    padding: 0 2rem 2rem 2rem;
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+
+    /* Un'unghia sottile di colore in alto, visibile solo al passaggio o molto sottile */
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--color-primary);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
 
     .img-wrapper {
-      height: 200px;
-      background: #f4f4f4;
+      aspect-ratio: 1 / 1; /* Quadrato per ridurre l'ingombro in altezza */
+      background: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 4rem;
+      margin: 0 -2rem 2rem -2rem; 
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      position: relative;
+      transition: all 0.5s ease;
+      overflow: hidden; /* Fondamentale per far sparire il bianco in eccesso */
+      
+      .beer-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Riempie tutto lo spazio senza spazi bianchi intorno */
+        object-position: center;
+        z-index: 2;
+        transition: transform 0.5s ease;
+      }
+      
+      &:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(transparent 70%, rgba(212, 163, 115, 0.05));
+        opacity: 0;
+        transition: opacity 0.4s;
+        z-index: 1;
+      }
     }
 
     .content {
-      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
+      text-align: center;
 
       h4 {
-        margin: 0 0 0.5rem 0;
-        color: #2a2a2a;
+        margin: 0;
+        color: #1a1a1a;
         font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.2px;
       }
 
       .brand {
-        color: #888;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
+        color: #b0b0b0;
+        font-size: 0.75rem;
+        margin: 0.75rem 0 1.5rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 2px;
+        font-weight: 500;
       }
     }
 
     .tags {
       display: flex;
-      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
       margin-top: auto;
       
       .tag {
-        background: #eee;
-        padding: 0.3rem 0.6rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #444;
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #555;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        padding-bottom: 2px;
+
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 1.5px;
+          background: var(--color-primary);
+          transform: translateX(-50%);
+          transition: width 0.3s ease;
+        }
       }
     }
 
     &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+      transform: translateY(-10px);
+      border-color: rgba(200, 110, 30, 0.2);
+      box-shadow: 
+        0 20px 45px rgba(85, 46, 13, 0.25), 
+        0 8px 20px rgba(200, 110, 30, 0.15);
+      
+      &:before {
+        transform: scaleX(1);
+      }
+
+      .img-wrapper {
+        border-color: transparent;
+        
+        .beer-img {
+          transform: scale(1.1);
+        }
+        
+        &:after {
+          opacity: 1;
+        }
+      }
       
       h4 {
-        color: #d4a373;
+        color: var(--color-primary);
+      }
+
+      .tags .tag:after {
+        width: 100%;
       }
     }
   }
 
   .no-results {
-    background: #fff;
-    padding: 3rem;
+    padding: 6rem 0;
     text-align: center;
-    border-radius: 8px;
-    color: #666;
+    color: #999;
+    font-style: italic;
     
     button {
       background: none;
       border: none;
-      color: #d4a373;
+      color: var(--color-primary);
       text-decoration: underline;
       cursor: pointer;
-      font-size: inherit;
+      font-weight: 600;
     }
   }
 
   @media (max-width: 900px) {
     .catalog-layout {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      padding: 1.5rem;
     }
 
     .filters-panel {
       position: static;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 1rem;
-      padding: 1.5rem;
+      margin-bottom: 2rem;
       
       h3 {
-        grid-column: 1 / -1;
-        margin-bottom: 0.5rem;
+        display: none;
       }
-      
-      .filter-group {
-        margin-bottom: 0;
-      }
-      
-      .btn-reset {
-        grid-column: 1 / -1;
-        margin-top: 0.5rem;
-      }
-    }
-    
-    .grid {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
   }
 </style>
