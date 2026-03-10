@@ -180,113 +180,154 @@
     // Default to blonde
     return `${base}images/blonde_placeholder.png`;
   }
+
+  let isFiltersOpen = false;
+  function toggleFilters() {
+    isFiltersOpen = !isFiltersOpen;
+    if (isFiltersOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
 </script>
 
 <div class="catalog-layout">
-  <!-- SETTAGGIO FILTRI (SIDEBAR) -->
-  <aside class="filters-panel">
-    <h3>Filtra Catalogo</h3>
+  <!-- MOBILE CONTROLS -->
+  <div class="mobile-actions">
+    <button class="btn-toggle-filters" on:click={toggleFilters}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
+      Filtri
+    </button>
+    <div class="results-info-mobile">
+      Mostrando <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'prodotto' : 'prodotti'}
+    </div>
+  </div>
+
+  <!-- OVERLAY PER MOBILE -->
+  {#if isFiltersOpen}
+    <div 
+      class="filters-overlay" 
+      on:click={toggleFilters} 
+      on:keydown={(e) => e.key === 'Escape' && toggleFilters()}
+      role="button"
+      aria-label="Chiudi filtri"
+      tabindex="0"
+    ></div>
+  {/if}
+
+  <!-- SETTAGGIO FILTRI (SIDEBAR / DRAWER) -->
+  <aside class="filters-panel" class:open={isFiltersOpen}>
+    <div class="sidebar-header">
+      <h3>Filtra Catalogo</h3>
+      <button class="btn-close-filters" on:click={toggleFilters}>&times;</button>
+    </div>
     
-    <div class="filter-group">
-      <label for="brand">Marca</label>
-      <select id="brand" bind:value={selectedBrand}>
-        <option value="">Tutte le marche ({beersForBrand.length})</option>
-        {#if selectedBrand && !brands.find(b => b.name === selectedBrand)}
-           <!-- Svelte auto-resets the `<select>` if the bound value isn't an option. We keep a hidden anchor so it survives cascading state changes. -->
-           <option value={selectedBrand} hidden>{selectedBrand}</option>
-        {/if}
-        {#each brands as b}
-          <option value={b.name}>{b.name} ({b.count})</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="style">Stile</label>
-      <select id="style" bind:value={selectedStyle}>
-        <option value="">Tutti gli stili ({beersForStyle.length})</option>
-        {#if selectedStyle && !styles.find(s => s.name === selectedStyle)}
-           <option value={selectedStyle} hidden>{selectedStyle}</option>
-        {/if}
-        {#each styles as s}
-          <option value={s.name}>{s.name} ({s.count})</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="color">Colore</label>
-      <select id="color" bind:value={selectedColor}>
-        <option value="">Tutti i colori ({beersForColor.length})</option>
-        {#if selectedColor && !colors.find(c => c.name === selectedColor)}
-           <option value={selectedColor} hidden>{selectedColor}</option>
-        {/if}
-        {#each colors as c}
-          <option value={c.name}>{c.name} ({c.count})</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="country">Nazione</label>
-      <select id="country" bind:value={selectedCountry}>
-        <option value="">Tutte le nazioni ({beersForCountry.length})</option>
-        {#if selectedCountry && !countries.find(c => c.name === selectedCountry)}
-           <option value={selectedCountry} hidden>{selectedCountry}</option>
-        {/if}
-        {#each countries as c}
-          <option value={c.name}>{c.name} ({c.count})</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="format">Formato</label>
-      <select id="format" bind:value={selectedFormat}>
-        <option value="">Tutti i formati ({beersForFormat.length})</option>
-        {#if selectedFormat && !formats.find(f => f.name === selectedFormat)}
-           <option value={selectedFormat} hidden>{selectedFormat}</option>
-        {/if}
-        {#each formats as f}
-          <option value={f.name}>{f.name} ({f.count})</option>
-        {/each}
-      </select>
-    </div>
-
-    <div class="filter-group slider-group">
-      <label for="abv">Gradazione Massima: {maxAbv}%</label>
-      <div class="range-container">
-        <input 
-          type="range" 
-          id="abv" 
-          min={actualMinAbv} 
-          max={actualMaxAbv} 
-          step="0.1" 
-          bind:value={maxAbv} 
-          style:background={`linear-gradient(to right, var(--color-primary) ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%, #eee ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%)`}
-          on:change={(e) => {
-            const val = parseFloat(e.currentTarget.value);
-            const closest = abvs.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
-            maxAbv = closest;
-          }}
-        />
-        <div class="custom-ticks">
-          {#each abvs as abv}
-            <div 
-              class="tick" 
-              style="left: {((abv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%"
-            ></div>
+    <div class="filters-scroll">
+      <div class="filter-group">
+        <label for="brand">Marca</label>
+        <select id="brand" bind:value={selectedBrand}>
+          <option value="">Tutte le marche ({beersForBrand.length})</option>
+          {#if selectedBrand && !brands.find(b => b.name === selectedBrand)}
+             <option value={selectedBrand} hidden>{selectedBrand}</option>
+          {/if}
+          {#each brands as b}
+            <option value={b.name}>{b.name} ({b.count})</option>
           {/each}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="style">Stile</label>
+        <select id="style" bind:value={selectedStyle}>
+          <option value="">Tutti gli stili ({beersForStyle.length})</option>
+          {#if selectedStyle && !styles.find(s => s.name === selectedStyle)}
+             <option value={selectedStyle} hidden>{selectedStyle}</option>
+          {/if}
+          {#each styles as s}
+            <option value={s.name}>{s.name} ({s.count})</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="color">Colore</label>
+        <select id="color" bind:value={selectedColor}>
+          <option value="">Tutti i colori ({beersForColor.length})</option>
+          {#if selectedColor && !colors.find(c => c.name === selectedColor)}
+             <option value={selectedColor} hidden>{selectedColor}</option>
+          {/if}
+          {#each colors as c}
+            <option value={c.name}>{c.name} ({c.count})</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="country">Nazione</label>
+        <select id="country" bind:value={selectedCountry}>
+          <option value="">Tutte le nazioni ({beersForCountry.length})</option>
+          {#if selectedCountry && !countries.find(c => c.name === selectedCountry)}
+             <option value={selectedCountry} hidden>{selectedCountry}</option>
+          {/if}
+          {#each countries as c}
+            <option value={c.name}>{c.name} ({c.count})</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="format">Formato</label>
+        <select id="format" bind:value={selectedFormat}>
+          <option value="">Tutti i formati ({beersForFormat.length})</option>
+          {#if selectedFormat && !formats.find(f => f.name === selectedFormat)}
+             <option value={selectedFormat} hidden>{selectedFormat}</option>
+          {/if}
+          {#each formats as f}
+            <option value={f.name}>{f.name} ({f.count})</option>
+          {/each}
+        </select>
+      </div>
+
+      <div class="filter-group slider-group">
+        <label for="abv">Gradazione Massima: {maxAbv}%</label>
+        <div class="range-container">
+          <input 
+            type="range" 
+            id="abv" 
+            min={actualMinAbv} 
+            max={actualMaxAbv} 
+            step="0.1" 
+            bind:value={maxAbv} 
+            style:background={`linear-gradient(to right, var(--color-primary) ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%, #eee ${((maxAbv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%)`}
+            on:change={(e) => {
+              const val = parseFloat(e.currentTarget.value);
+              const closest = abvs.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
+              maxAbv = closest;
+            }}
+          />
+          <div class="custom-ticks">
+            {#each abvs as abv}
+              <div 
+                class="tick" 
+                style="left: {((abv - actualMinAbv) / (actualMaxAbv - actualMinAbv)) * 100}%"
+              ></div>
+            {/each}
+          </div>
+        </div>
+
+        <div class="range-labels">
+          <span>{actualMinAbv}%</span>
+          <span>{actualMaxAbv}%</span>
         </div>
       </div>
 
-      <div class="range-labels">
-        <span>{actualMinAbv}%</span>
-        <span>{actualMaxAbv}%</span>
+      <button class="btn-reset" on:click={resetFilters}>Azzera Filtri</button>
+      
+      <div class="sidebar-footer-mobile">
+        <button class="btn-apply" on:click={toggleFilters}>Applica Filtri</button>
       </div>
     </div>
-
-    <button class="btn-reset" on:click={resetFilters}>Azzera Filtri</button>
   </aside>
 
   <!-- LISTA PRODOTTI (GRID MAIN) -->
@@ -329,7 +370,8 @@
     grid-template-columns: 240px 1fr;
     gap: 4rem;
     align-items: start;
-    padding: 3rem 0;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 
   .filters-panel {
@@ -343,10 +385,96 @@
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: #999;
-      margin-bottom: 2rem;
+      margin-top: 0;
+      margin-bottom: 2.5rem;
       font-weight: 700;
       border: none;
       padding: 0;
+      line-height: 1.2;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-close-filters {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #333;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+  }
+
+  .mobile-actions {
+    display: none;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: 80px; /* Aligned with Header sticky height */
+    z-index: 10;
+    background: #fff;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    .btn-toggle-filters {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #1a1a1a;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
+
+      &:hover {
+        background: var(--color-primary);
+      }
+    }
+
+    .results-info-mobile {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #999;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .filters-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+  }
+
+  .sidebar-footer-mobile {
+    display: none;
+    padding: 2rem 0;
+    
+    .btn-apply {
+      width: 100%;
+      padding: 1.2rem;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
     }
   }
 
@@ -481,29 +609,41 @@
   }
 
   .results-info {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     font-size: 0.9rem;
     color: #999;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    
+    p {
+      margin: 0;
+      line-height: 1.2;
+    }
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 2.5rem;
+    grid-auto-rows: 1fr;
+    gap: 1.5rem;
   }
 
-  @media (min-width: 900px) {
+  @media (max-width: 1200px) {
     .grid {
-       /* Almeno 3 per riga su desktop */
-       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  @media (max-width: 1200px) and (min-width: 768px) {
+  @media (max-width: 768px) {
     .grid {
-      grid-template-columns: repeat(3, 1fr); /* Enforce 3 columns on tablets */
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -619,12 +759,11 @@
       }
     }
 
+    border-radius: 0;
+
     &:hover {
-      transform: translateY(-10px);
-      border-color: rgba(200, 110, 30, 0.2);
-      box-shadow: 
-        0 20px 45px rgba(85, 46, 13, 0.25), 
-        0 8px 20px rgba(200, 110, 30, 0.15);
+      background: #fdfdfd;
+      border-color: var(--color-primary);
       
       &:before {
         transform: scaleX(1);
@@ -634,11 +773,7 @@
         border-color: transparent;
         
         .beer-img {
-          transform: scale(1.1);
-        }
-        
-        &:after {
-          opacity: 1;
+          transform: scale(1.05);
         }
       }
       
@@ -671,15 +806,82 @@
   @media (max-width: 900px) {
     .catalog-layout {
       grid-template-columns: 1fr;
-      padding: 1.5rem;
+      padding: 0 0 3rem;
+      gap: 0;
+    }
+
+    .results-info {
+      display: none;
+    }
+
+    .mobile-actions {
+      display: flex;
     }
 
     .filters-panel {
-      position: static;
-      margin-bottom: 2rem;
-      
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 90%;
+      max-width: 400px;
+      height: 100vh;
+      background: white;
+      z-index: 1001;
+      padding: 2rem;
+      margin: 0;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+
+      &.open {
+        transform: translateX(0);
+      }
+
       h3 {
-        display: none;
+        display: block;
+        margin-bottom: 0;
+      }
+
+      .btn-close-filters {
+        display: block;
+      }
+
+      .filters-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 2rem;
+        margin-right: -1rem;
+        padding-right: 1rem;
+      }
+
+      .sidebar-footer-mobile {
+        display: block;
+      }
+    }
+    
+    .beer-card {
+      padding: 0 1rem 1.5rem 1rem;
+      
+      .img-wrapper {
+        margin: 0 -1rem 1.5rem -1rem;
+      }
+      
+      .content h4 {
+        font-size: 1.1rem;
+      }
+      
+      .brand {
+        margin: 0.5rem 0 1rem;
+      }
+      
+      .tags {
+        gap: 0.75rem;
+        
+        .tag {
+          font-size: 0.65rem;
+        }
       }
     }
   }
