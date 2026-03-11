@@ -77,4 +77,24 @@ const {
 		overflow-x: hidden; /* Prevent horizontal scroll from 110vw logo */
 		width: 100%;
 	}
+
+	/* Minimalist Light Gray Scrollbar */
+	::-webkit-scrollbar {
+		width: 12px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: #f5f5f5;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #bbb;
+		border-radius: 20px;
+		border: 3px solid #f5f5f5;
+		transition: background 0.3s ease;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: #999;
+	}
 </style>
