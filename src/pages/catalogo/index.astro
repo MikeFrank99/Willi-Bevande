@@ -21,19 +21,12 @@ const pageDescription =
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-    <div class="container-full section-padding">
+    <div class="container section-padding">
         <Catalog client:load initialBeers={svelteBeers} />
     </div>
 </Layout>
 
 <style>
-    .container-full {
-        width: 100%;
-        max-width: 1600px;
-        margin: 0 auto;
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
     .section-padding {
         padding-top: 2rem;
         padding-bottom: 2rem;

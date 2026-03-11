@@ -14,6 +14,7 @@
       style: string;
       format: string[];
       abv: number;
+      color: string;
       country: string;
       image: string;
       description: string;
@@ -347,14 +348,25 @@
             <div class="img-wrapper">
               <img src={getBeerImage(beer)} alt={beer.data.title} class="beer-img" />
             </div>
-            <div class="content">
-              <h4>{beer.data.title}</h4>
-              <p class="brand">{beer.data.brand}</p>
+            <div class="card-info">
+              <div class="content">
+                <h4>{beer.data.title}</h4>
+                <p class="brand">{beer.data.brand}</p>
+              </div>
               
-              <div class="tags">
-                <span class="tag">{beer.data.style}</span>
-                <span class="tag">{beer.data.color}</span>
-                <span class="tag">{beer.data.abv}%</span>
+              <div class="specs-list">
+                <div class="spec-group">
+                  <span class="label">Stile</span>
+                  <span class="value">{beer.data.style}</span>
+                </div>
+                <div class="spec-group">
+                  <span class="label">Colore</span>
+                  <span class="value">{beer.data.color}</span>
+                </div>
+                <div class="spec-group">
+                  <span class="label">Grad.</span>
+                  <span class="value accent">{beer.data.abv}%</span>
+                </div>
               </div>
             </div>
           </a>
@@ -483,11 +495,12 @@
 
     label {
       display: block;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 0.75rem;
       font-size: 0.85rem;
       text-transform: uppercase;
-      color: #666;
+      color: var(--color-primary-dark);
+      letter-spacing: 0.5px;
     }
 
     select {
@@ -505,6 +518,7 @@
       &:focus {
         outline: none;
         border-bottom-color: var(--color-primary);
+        color: var(--color-primary-dark);
       }
     }
 
@@ -618,26 +632,28 @@
     p {
       margin: 0;
       line-height: 1.2;
+      strong {
+        color: var(--color-primary-dark);
+      }
     }
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     grid-auto-rows: 1fr;
     gap: 1.5rem;
   }
 
   @media (max-width: 1200px) {
     .grid {
-      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
     }
   }
 
   @media (max-width: 768px) {
     .grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
   }
 
@@ -651,11 +667,13 @@
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    padding: 0 2rem 2rem 2rem;
+    padding: 0 1.5rem 2.5rem 1.5rem; /* Increased bottom padding */
     background: #ffffff;
     border: 1px solid #f0f0f0;
     transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
     position: relative;
+    height: 100%;
+    border-radius: 0;
     overflow: hidden;
 
     /* Un'unghia sottile di colore in alto, visibile solo al passaggio o molto sottile */
@@ -678,12 +696,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0 -2rem 2rem -2rem; 
+      margin: 0 -1.5rem 1.5rem -1.5rem; /* Flush with card sides, now with bottom margin */
       border: none;
       border-bottom: 1px solid #f0f0f0;
       position: relative;
       transition: all 0.5s ease;
       overflow: hidden; /* Fondamentale per far sparire il bianco in eccesso */
+      z-index: 1;
       
       .beer-img {
         width: 100%;
@@ -705,59 +724,80 @@
       }
     }
 
+    .card-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* This aligns top content and bottom specs */
+      padding-top: 1rem;
+      min-height: 210px; /* Reduced min-height to tighten space */
+    }
+
     .content {
       display: flex;
       flex-direction: column;
       text-align: center;
+      margin-bottom: 1rem;
 
       h4 {
         margin: 0;
-        color: #1a1a1a;
-        font-size: 1.2rem;
+        color: var(--color-secondary);
+        font-family: var(--font-family-base);
+        font-size: 1.15rem;
         font-weight: 700;
         line-height: 1.3;
-        letter-spacing: -0.2px;
+        letter-spacing: -0.1px;
+        transition: color 0.3s ease;
       }
 
       .brand {
-        color: #b0b0b0;
-        font-size: 0.75rem;
-        margin: 0.75rem 0 1.5rem;
+        color: #aaa;
+        font-size: 0.65rem;
+        margin-top: 0.5rem;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        font-weight: 500;
+        letter-spacing: 1.5px;
+        font-weight: 600;
       }
     }
 
-    .tags {
+    .specs-list {
       display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-top: auto;
+      flex-direction: column;
+      gap: 0.7rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #f0f0f0;
       
-      .tag {
-        font-size: 0.7rem;
-        font-weight: 800;
-        color: #555;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        position: relative;
-        padding-bottom: 2px;
+      .spec-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
 
-        &:after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 0;
-          height: 1.5px;
-          background: var(--color-primary);
-          transform: translateX(-50%);
-          transition: width 0.3s ease;
+        .label {
+          font-size: 0.65rem;
+          color: #bbb;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 700;
+          flex-shrink: 0;
+        }
+
+        .value {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: #444;
+          text-align: right;
+          line-height: 1.2;
+
+          &.accent {
+            color: var(--color-primary-dark);
+            font-size: 1.1rem;
+            font-weight: 800;
+          }
         }
       }
     }
+
 
     border-radius: 0;
 
@@ -781,8 +821,10 @@
         color: var(--color-primary);
       }
 
-      .tags .tag:after {
-        width: 100%;
+      .specs-list .spec-group .value.accent {
+        transform: scale(1.05);
+        display: inline-block;
+        transition: transform 0.2s ease;
       }
     }
   }
@@ -876,11 +918,16 @@
         margin: 0.5rem 0 1rem;
       }
       
-      .tags {
-        gap: 0.75rem;
+      .specs-list {
+        gap: 0.4rem;
+        padding-top: 0.8rem;
         
-        .tag {
-          font-size: 0.65rem;
+        .spec-group .value {
+          font-size: 0.8rem;
+          
+          &.accent {
+            font-size: 1rem;
+          }
         }
       }
     }

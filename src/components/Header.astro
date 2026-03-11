@@ -1,74 +1,42 @@
 ---
-import "../styles/global.scss";
 import { Image } from "astro:assets";
 import logo from "../assets/logos/Willi_Logo.svg";
 const base = import.meta.env.BASE_URL;
+const pathname = new URL(Astro.request.url).pathname;
+// Remove leading base if present to normalize currentPath
+const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
 ---
 
 <header class="main-header">
     <div class="container header-content">
-        <button class="menu-toggle" id="menuToggle" aria-label="Apri menu">
-            <span class="hamburger-bar bar-top"></span>
-            <span class="hamburger-bar bar-bottom"></span>
-        </button>
-
         <a href={base} class="logo">
             <Image
                 src={logo}
                 alt="Willi Bevande Logo"
-                width={300}
-                height={150}
+                width={230}
+                height={160}
                 loading="eager"
             />
         </a>
 
-        <div class="header-placeholder"></div> <!-- Mantieni logo centrato -->
+        <nav class="main-nav">
+            <ul>
+                <li>
+                    <a href={`${base}catalogo/`} class={(currentPath === 'catalogo/' || currentPath.startsWith('catalogo/')) ? 'active' : ''}>
+                        Catalogo
+                    </a>
+                </li>
+                <li>
+                    <a href={`${base}servizi/impianti-spina/`} class={currentPath.includes('impianti-spina') ? 'active' : ''}>
+                        Impianti Spina
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </header>
 
-<!-- Overlay -->
-<div class="menu-overlay" id="menuOverlay"></div>
-
-<!-- Side Drawer Menu -->
-<nav class="side-drawer" id="sideDrawer">
-    <button class="close-menu" id="closeMenu">&times;</button>
-    <ul class="drawer-links">
-        <li><a href={base}>Home</a></li>
-        <li><a href={`${base}catalogo/`}>Catalogo</a></li>
-        <li><a href={`${base}servizi/impianti-spina/`}>Impianti Spina</a></li>
-    </ul>
-</nav>
-
-<script>
-    function initMenu() {
-        const menuToggle = document.getElementById('menuToggle');
-        const closeMenu = document.getElementById('closeMenu');
-        const sideDrawer = document.getElementById('sideDrawer');
-        const menuOverlay = document.getElementById('menuOverlay');
-
-        if (!menuToggle || !sideDrawer || !menuOverlay) return;
-
-        function toggleMenu() {
-            sideDrawer?.classList.toggle('open');
-            menuOverlay?.classList.toggle('open');
-            document.body.classList.toggle('no-scroll');
-            
-            // Toggle animation on toggle button itself if preferred
-            menuToggle?.classList.toggle('active');
-        }
-
-        menuToggle.addEventListener('click', toggleMenu);
-        if (closeMenu) closeMenu.addEventListener('click', toggleMenu);
-        menuOverlay.addEventListener('click', toggleMenu);
-    }
-
-    initMenu();
-    document.addEventListener('astro:after-swap', initMenu);
-</script>
-
 <style lang="scss">
-    @import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
-
     .main-header {
         background-color: #ffffff;
         color: var(--color-text);
@@ -79,28 +47,24 @@ const base = import.meta.env.BASE_URL;
         border-bottom: 1px solid #eee;
 
         .header-content {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
             align-items: center;
+            justify-content: space-between;
             height: 80px;
-            position: relative;
         }
 
         .logo {
             display: flex;
-            justify-content: center;
             align-items: center;
-            position: relative;
-            z-index: 10;
             height: 80px;
+            flex-shrink: 0;
 
             img {
-                height: 130px;
+                height: 60px;
                 width: auto;
                 transition: transform 0.2s ease;
-                /* Shadows removed */
-                pointer-events: none;
                 display: block;
+                pointer-events: none;
             }
 
             &:hover img {
@@ -108,167 +72,73 @@ const base = import.meta.env.BASE_URL;
             }
         }
 
-        /* Flat Hamburger */
-        .menu-toggle {
-            justify-self: start;
-            align-self: center;
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-            padding: 15px;
-            margin-left: -5px;
-            z-index: 105;
-            position: relative;
-
-            .hamburger-bar {
-                display: block;
-                height: 3px; /* Slightly thicker for flat boldness */
-                background-color: #1a1a1a;
-                border-radius: 0; /* Remove rounding */
-                transition: all 0.2s ease;
-            }
-
-            .bar-top { width: 28px; }
-            .bar-bottom { width: 18px; }
-
-            &:hover {
-                .bar-top { width: 20px; }
-                .bar-bottom { width: 28px; }
-            }
-        }
-
-        .header-placeholder {
-            justify-self: end;
-        }
-    }
-
-    /* Flat Overlay */
-    .menu-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6); /* Solid flat opacity */
-        z-index: 2000;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-
-        &.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-    }
-
-    /* Flat Side Drawer */
-    .side-drawer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        max-width: 320px;
-        height: 100vh;
-        background-color: var(--color-primary);
-        z-index: 2100;
-        transform: translateX(-100%);
-        transition: transform 0.4s cubic-bezier(0, 0, 0, 1);
-        padding: 6rem 2.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-
-        &.open {
-            transform: translateX(0);
-        }
-
-        .close-menu {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2.5rem;
-            line-height: 1;
-            font-weight: 100;
-            cursor: pointer;
-            padding: 5px;
-            transition: transform 0.2s ease;
-
-            &:hover {
-                transform: scale(1.1);
-            }
-        }
-
-        .drawer-links {
-            list-style: none;
-            margin: 2rem 0 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 1.8rem;
-            width: 100%;
-
-            li {
-                width: 100%;
-                text-align: left;
+        .main-nav {
+            ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                gap: 2.5rem;
+                align-items: center;
             }
 
             li a {
-                color: white;
+                color: #555;
                 text-decoration: none;
-                font-family: 'Pirata One', cursive;
-                font-size: 2.2rem;
-                font-weight: 400;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                transition: transform 0.2s ease;
+                font-family: var(--font-family-base), sans-serif;
+                font-size: 1rem;
+                font-weight: 600;
+                letter-spacing: -0.2px;
+                transition: all 0.2s ease;
                 display: block;
+                padding: 0.5rem 0;
+                position: relative;
 
-                &:hover {
-                    transform: translateX(10px);
+                &:hover, &.active {
+                    color: var(--color-primary);
+                }
+
+                &.active:after {
+                    content: '';
+                    position: absolute;
+                    bottom: -2px;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: var(--color-primary);
                 }
             }
         }
-    }
-
-    :global(body.no-scroll) {
-        overflow: hidden;
     }
 
     @media (max-width: 768px) {
         .main-header {
+            height: auto;
+            padding: 1rem 0;
+
             .header-content {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                height: auto;
+                justify-content: center;
             }
 
             .logo {
-                width: 150px;
-                justify-content: center;
+                height: auto;
                 img {
-                    height: 100px;
+                    height: 80px;
                 }
             }
-            
-            .menu-toggle {
-                padding: 15px;
-            }
-        }
 
-        .side-drawer {
-            max-width: 85%;
-            padding: 6rem 2.5rem;
-            
-            .drawer-links li a {
-                font-size: 2rem;
+            .main-nav ul {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+
+                li a {
+                    font-size: 0.95rem;
+                }
             }
         }
     }
 </style>
-
-</style>
-
