@@ -4,30 +4,48 @@ import logo from "../assets/logos/Willi_Logo.svg";
 const base = import.meta.env.BASE_URL;
 const pathname = new URL(Astro.request.url).pathname;
 // Remove leading base if present to normalize currentPath
-const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pathname;
+const currentPath = pathname.startsWith(base)
+    ? pathname.slice(base.length)
+    : pathname;
 ---
 
 <header class="main-header">
     <div class="container header-content">
-        <a href={base} class="logo">
-            <Image
-                src={logo}
-                alt="Willi Bevande Logo"
-                width={230}
-                height={160}
-                loading="eager"
-            />
-        </a>
+        <div class="logo-section">
+            <div class="logo-wrapper">
+
+                <a href={base} class="logo">
+                    <Image
+                        src={logo}
+                        alt="Willi Bevande Logo"
+                        width={230}
+                        height={160}
+                        loading="eager"
+                    />
+                </a>
+            </div>
+        </div>
 
         <nav class="main-nav">
             <ul>
                 <li>
-                    <a href={`${base}catalogo/`} class={(currentPath === 'catalogo/' || currentPath.startsWith('catalogo/')) ? 'active' : ''}>
+                    <a
+                        href={`${base}catalogo/`}
+                        class={currentPath === "catalogo/" ||
+                        currentPath.startsWith("catalogo/")
+                            ? "active"
+                            : ""}
+                    >
                         Catalogo
                     </a>
                 </li>
                 <li>
-                    <a href={`${base}servizi/impianti-spina/`} class={currentPath.includes('impianti-spina') ? 'active' : ''}>
+                    <a
+                        href={`${base}servizi/impianti-spina/`}
+                        class={currentPath.includes("impianti-spina")
+                            ? "active"
+                            : ""}
+                    >
                         Impianti Spina
                     </a>
                 </li>
@@ -38,47 +56,64 @@ const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pa
 
 <style lang="scss">
     .main-header {
-        background-color: #ffffff;
         color: var(--color-text);
-        height: 80px;
-        position: sticky;
-        top: 0;
+        width: 100%;
+        position: relative;
         z-index: 1000;
         border-bottom: 1px solid #eee;
+        padding: 2rem 0;
 
         .header-content {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            height: 80px;
+            justify-content: center;
+            gap: 1.5rem;
         }
 
-        .logo {
+        .logo-section {
             display: flex;
+            justify-content: center;
             align-items: center;
-            height: 80px;
-            flex-shrink: 0;
+            width: 100%;
+        }
 
-            img {
-                height: 48px; /* Reduced from 60px */
-                width: auto;
-                transition: transform 0.2s ease;
+        .logo-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+
+
+
+            .logo {
+                position: relative;
+                z-index: 2;
                 display: block;
-                pointer-events: none;
-            }
 
-            &:hover img {
-                transform: scale(1.05);
+                img {
+                    height: 80px;
+                    width: auto;
+                    transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+                    display: block;
+                }
+
+                &:hover img {
+                    transform: scale(1.05);
+                }
             }
         }
 
         .main-nav {
+            z-index: 10;
+
             ul {
                 list-style: none;
                 margin: 0;
                 padding: 0;
                 display: flex;
-                gap: 2.5rem;
+                gap: 3rem;
                 align-items: center;
             }
 
@@ -86,7 +121,7 @@ const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pa
                 color: #555;
                 text-decoration: none;
                 font-family: var(--font-family-base), sans-serif;
-                font-size: 1rem;
+                font-size: 1.1rem;
                 font-weight: 600;
                 letter-spacing: -0.2px;
                 transition: all 0.2s ease;
@@ -94,12 +129,13 @@ const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pa
                 padding: 0.5rem 0;
                 position: relative;
 
-                &:hover, &.active {
+                &:hover,
+                &.active {
                     color: var(--color-primary);
                 }
 
                 &.active:after {
-                    content: '';
+                    content: "";
                     position: absolute;
                     bottom: -2px;
                     left: 0;
@@ -113,30 +149,16 @@ const currentPath = pathname.startsWith(base) ? pathname.slice(base.length) : pa
 
     @media (max-width: 768px) {
         .main-header {
-            height: auto;
-            padding: 1rem 0;
+            padding: 1.5rem 0;
 
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-                height: auto;
-                justify-content: center;
-            }
-
-            .logo {
-                height: auto;
-                img {
-                    height: 65px; /* Reduced from 80px */
-                }
+            .logo img {
+                height: 60px;
             }
 
             .main-nav ul {
-                gap: 1.5rem;
-                flex-wrap: wrap;
-                justify-content: center;
-
+                gap: 2rem;
                 li a {
-                    font-size: 0.95rem;
+                    font-size: 1rem;
                 }
             }
         }

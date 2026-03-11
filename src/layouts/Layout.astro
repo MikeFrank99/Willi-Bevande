@@ -65,10 +65,16 @@ const {
 
 <style>
 	.page-content {
-		min-height: calc(
-			100vh - 200px
-		); /* Assicura che il footer stia sempre in basso */
+		min-height: calc(100vh - 200px);
 		display: flex;
 		flex-direction: column;
+		position: relative;
+	}
+</style>
+
+<style is:global>
+	body {
+		overflow-x: hidden; /* Prevent horizontal scroll from 110vw logo */
+		width: 100%;
 	}
 </style>
