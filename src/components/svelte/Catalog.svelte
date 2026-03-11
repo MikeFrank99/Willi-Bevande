@@ -1019,7 +1019,9 @@
       display: flex;
       flex-direction: column;
       box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-      background: rgba(255, 255, 255, 0.1); /* Glass for mobile too */
+      background: #ffffff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
       border-radius: 0;
 
       &.open {
