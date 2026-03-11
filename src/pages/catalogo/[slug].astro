@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { Image } from "astro:assets";
 const base = import.meta.env.BASE_URL;
 
-// Funzione Astro obbligatoria per generare percorsi statici da params dinamici
 export async function getStaticPaths() {
     const beers = await getCollection("beers");
 
@@ -15,132 +15,126 @@ export async function getStaticPaths() {
 
 const { beer } = Astro.props;
 const { Content } = await beer.render();
+
+const pageTitle = `${beer.data.title} | Willi Bevande`;
+
+// Coerenzia con il catalogo Svelte
+const getBeerImage = (beerData) => {
+    const style = beerData.style.toLowerCase();
+    const title = beerData.title.toLowerCase();
+
+    if (style.includes('rossa') || style.includes('red') || style.includes('stout') || style.includes('scura') || title.includes('sixtus')) {
+      return `${base}images/red_placeholder.png`;
+    }
+    if (style.includes('dark') || title.includes('stout')) {
+      return `${base}images/dark_placeholder.png`;
+    }
+    // Default to blonde
+    return `${base}images/blonde_placeholder.png`;
+}
 ---
 
 <Layout
-    title={beer.data.title}
+    title={pageTitle}
     description={beer.data.description}
-    image={beer.data.image}
 >
-    <article class="beer-detail container">
+    <div class="container section-padding">
         <div class="back-link">
             <a href={`${base}catalogo/`} id="back-btn">← Torna al Catalogo</a>
         </div>
 
-        <script>
-            // Script client-side per tentare di usare history.back() e preservare i filtri URL
-            document.addEventListener("astro:page-load", () => {
-                const backBtn = document.getElementById("back-btn");
-                if (backBtn) {
-                    backBtn.addEventListener("click", (e) => {
-                        // Se c'è della history nella sessione corrente che non appartiene ad un altro sito
-                        if (
-                            window.history.length > 1 &&
-                            document.referrer.includes(window.location.host)
-                        ) {
-                            e.preventDefault();
-                            window.history.back();
-                        }
-                        // Altrimenti il link funzionerà col normale href come fallback
-                    });
-                }
-            });
+        <article class="beer-detail">
+            <div class="product-layout">
+                <!-- Image Section -->
+                <div class="product-image">
+                    <div class="image-box">
+                        <img 
+                            src={getBeerImage(beer.data)} 
+                            alt={beer.data.title} 
+                            class="main-img"
+                        />
+                    </div>
+                </div>
 
-            // Per gestire casi senza View Transitions abilitate
-            document.addEventListener("DOMContentLoaded", () => {
-                const backBtn = document.getElementById("back-btn");
-                if (backBtn && !(window as any).Astro) {
-                    backBtn.addEventListener("click", (e) => {
-                        if (
-                            window.history.length > 1 &&
-                            document.referrer.includes(window.location.host)
-                        ) {
-                            e.preventDefault();
-                            window.history.back();
-                        }
-                    });
-                }
-            });
-        </script>
+                <!-- Info Section -->
+                <div class="product-info">
+                    <header>
+                        <p class="brand">{beer.data.brand}</p>
+                        <h1>{beer.data.title}</h1>
+                    </header>
 
-        <div class="product-layout">
-            <!-- Image Section -->
-            <div class="product-image">
-                <!-- Usa un placeholder visivo per ora se l'img non punta a un asset reale -->
-                <div
-                    class="img-placeholder"
-                    title="Immagine di {beer.data.title}"
-                >
-                    <span class="icon">🍺</span>
+                    <div class="specs-box">
+                        <div class="spec-row">
+                            <span class="label">Stile</span>
+                            <span class="value">{beer.data.style}</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="label">Colore</span>
+                            <span class="value">{beer.data.color}</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="label">Gradazione</span>
+                            <span class="value accent">{beer.data.abv}%</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="label">Nazione</span>
+                            <span class="value">{beer.data.country}</span>
+                        </div>
+                        <div class="spec-row formats-row">
+                            <span class="label">Disponibilità</span>
+                            <div class="formats-list">
+                                {beer.data.format.map((f) => (
+                                    <span class="format-tag">{f}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="description-area">
+                        <h3>Descrizione</h3>
+                        <div class="markdown-content">
+                            <Content />
+                        </div>
+                    </div>
+
+                    <div class="cta-box">
+                        <p>Sei un professionista Ho.Re.Ca? Richiedi il listino prezzi riservato.</p>
+                        <a href="mailto:ordini@willibevande.it" class="btn-primary">Richiedi Informazioni</a>
+                    </div>
                 </div>
             </div>
-
-            <!-- Info Section -->
-            <div class="product-info">
-                <header>
-                    <p class="brand">{beer.data.brand}</p>
-                    <h1>{beer.data.title}</h1>
-                </header>
-
-                <div class="specs-grid">
-                    <div class="spec-item">
-                        <span class="label">Stile</span>
-                        <span class="value">{beer.data.style}</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="label">Gradazione</span>
-                        <span class="value">{beer.data.abv}%</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="label">Nazione</span>
-                        <span class="value">{beer.data.country}</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="label">Formati</span>
-                        <span class="value formats">
-                            {
-                                beer.data.format.map((f) => (
-                                    <span class="format-badge">{f}</span>
-                                ))
-                            }
-                        </span>
-                    </div>
-                </div>
-
-                <div class="markdown-content">
-                    <!-- Qui viene renderizzato il corpo del markdown scritto nel file della collezione -->
-                    <Content />
-                </div>
-
-                <div class="cta-section">
-                    <p class="b2b-notice">
-                        Sei un professionista del settore Ho.Re.Ca? Contattaci
-                        per il listino prezzi riservato e per effettuare un
-                        ordine.
-                    </p>
-                    <a
-                        href="mailto:ordini@willibevande.it"
-                        class="btn btn-primary btn-large"
-                        >Richiedi Informazioni</a
-                    >
-                </div>
-            </div>
-        </div>
-    </article>
+        </article>
+    </div>
 </Layout>
 
+<script>
+    document.addEventListener("astro:page-load", () => {
+        const backBtn = document.getElementById("back-btn");
+        if (backBtn) {
+            backBtn.addEventListener("click", (e) => {
+                if (window.history.length > 1 && document.referrer.includes(window.location.host)) {
+                    e.preventDefault();
+                    window.history.back();
+                }
+            });
+        }
+    });
+</script>
+
 <style lang="scss">
-    .beer-detail {
-        padding: 3rem 1rem 5rem 1rem;
+    .section-padding {
+        padding-top: 2rem;
+        padding-bottom: 5rem;
     }
 
     .back-link {
-        margin-bottom: 2rem;
-
+        margin-bottom: 3rem;
         a {
+            font-size: 0.9rem;
             font-weight: 600;
-            color: var(--color-text-light);
-
+            color: #999;
+            text-decoration: none;
+            transition: color 0.3s ease;
             &:hover {
                 color: var(--color-primary);
             }
@@ -150,168 +144,188 @@ const { Content } = await beer.render();
     .product-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 4rem;
+        gap: 5rem;
         align-items: start;
     }
 
     .product-image {
         position: sticky;
-        top: 100px;
-
-        .img-placeholder {
-            background-color: #f4f4f4;
-            border-radius: 12px;
-            aspect-ratio: 3/4;
+        top: 120px;
+        
+        .image-box {
+            background: #fff;
+            padding: 0;
+            border: 1px solid #f0f0f0;
             display: flex;
-            align-items: center;
             justify-content: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            border: 1px solid #ebebeb;
+            align-items: center;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
 
-            .icon {
-                font-size: 8rem;
-                filter: grayscale(0.2);
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+            
+            &:hover img {
+                transform: scale(1.05);
             }
         }
     }
 
     .product-info {
         header {
-            margin-bottom: 2.5rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 2rem;
-
+            margin-bottom: 3rem;
+            
             .brand {
-                color: var(--color-text-light);
+                color: var(--color-primary);
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                font-weight: 600;
+                font-size: 0.8rem;
+                font-weight: 700;
                 margin-bottom: 0.5rem;
             }
 
             h1 {
-                font-size: 3.5rem;
-                line-height: 1.1;
-                margin: 0;
+                font-size: 3rem;
+                font-weight: 800;
                 color: var(--color-secondary);
+                margin: 0;
+                line-height: 1.1;
+                letter-spacing: -1px;
             }
         }
     }
 
-    .specs-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        margin-bottom: 3rem;
-        background: #fff;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    .specs-box {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        margin-bottom: 4rem;
+        padding: 2rem 0;
+        border-top: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
 
-        .spec-item {
+        .spec-row {
             display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
+            justify-content: space-between;
+            align-items: center;
+            
+            &.formats-row {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 1rem;
+            }
 
             .label {
-                font-size: 0.85rem;
-                color: var(--color-text-light);
+                font-size: 0.75rem;
+                color: #aaa;
                 text-transform: uppercase;
                 letter-spacing: 1px;
+                font-weight: 700;
             }
 
             .value {
                 font-size: 1.1rem;
                 font-weight: 600;
-                color: var(--color-text);
+                color: #333;
+
+                &.accent {
+                    color: var(--color-primary-dark);
+                    font-size: 1.4rem;
+                    font-weight: 800;
+                }
             }
         }
     }
 
-    .formats {
+    .formats-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 0.6rem;
 
-        .format-badge {
-            background: var(--color-bg);
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            border: 1px solid #ddd;
+        .format-tag {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            background: #f9f9f9;
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #eee;
         }
     }
 
-    .markdown-content {
-        font-size: 1.15rem;
-        line-height: 1.8;
-        color: #444;
-        margin-bottom: 3rem;
-    }
-
-    .cta-section {
-        background: var(--color-bg-alt);
-        padding: 2rem;
-        border-radius: 8px;
-        border-left: 4px solid var(--color-primary);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-
-        .b2b-notice {
-            font-weight: 600;
+    .description-area {
+        margin-bottom: 4rem;
+        
+        h3 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             color: var(--color-secondary);
             margin-bottom: 1.5rem;
+            font-weight: 800;
         }
 
-        .btn {
-            display: inline-block;
-            text-align: center;
-            width: 100%;
+        .markdown-content {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            
+            :global(p) { margin-bottom: 1.5rem; }
+            :global(strong) { color: #222; font-weight: 700; }
         }
     }
 
-    .btn-large {
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
-        border-radius: 6px;
-        background-color: var(--color-primary);
-        color: #fff;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all var(--transition-speed);
-        box-shadow: 0 4px 10px rgba(var(--color-primary), 0.3);
-        border: none;
+    .cta-box {
+        background: #fafafa;
+        padding: 2.5rem;
+        border-radius: 0;
+        border: 1px solid #f0f0f0;
+        text-align: center;
 
-        &:hover {
-            background-color: var(--color-primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(var(--color-primary), 0.4);
+        p {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--color-primary);
             color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                background: var(--color-primary-dark);
+                transform: translateY(-2px);
+            }
         }
     }
 
     @media (max-width: 900px) {
         .product-layout {
             grid-template-columns: 1fr;
-            gap: 2rem;
+            gap: 3rem;
         }
 
         .product-image {
             position: static;
-
-            .img-placeholder {
-                max-width: 400px;
-                margin: 0 auto;
-                aspect-ratio: 1;
-            }
-        }
-
-        .specs-grid {
-            grid-template-columns: 1fr;
         }
 
         .product-info header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+        }
+        
+        .specs-box .spec-row .value.accent {
+            font-size: 1.2rem;
         }
     }
 </style>

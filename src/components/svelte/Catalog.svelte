@@ -659,7 +659,8 @@
 
   @media (max-width: 480px) {
     .grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
     }
   }
 
@@ -730,14 +731,14 @@
       flex-direction: column;
       justify-content: space-between; /* This aligns top content and bottom specs */
       padding-top: 1rem;
-      min-height: 210px; /* Reduced min-height to tighten space */
+      min-height: 180px; /* Reduced further to tighten space */
     }
 
     .content {
       display: flex;
       flex-direction: column;
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
 
       h4 {
         margin: 0;
@@ -764,7 +765,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.7rem;
-      padding-top: 1.2rem;
+      padding-top: 0.8rem;
       border-top: 1px solid #f0f0f0;
       
       .spec-group {
@@ -904,18 +905,27 @@
     }
     
     .beer-card {
-      padding: 0 1rem 1.5rem 1rem;
+      padding: 0 0.8rem 1.5rem 0.8rem;
       
-      .img-wrapper {
-        margin: 0 -1rem 1.5rem -1rem;
+      .card-info {
+        min-height: 150px;
+        padding-top: 0.5rem;
       }
       
-      .content h4 {
-        font-size: 1.1rem;
+      .img-wrapper {
+        margin: 0 -0.8rem 1rem -0.8rem;
+      }
+      
+      .content {
+        padding-top: 0.5rem;
+        h4 {
+          font-size: 0.95rem;
+        }
       }
       
       .brand {
-        margin: 0.5rem 0 1rem;
+        margin: 0.2rem 0 0.5rem;
+        font-size: 0.6rem;
       }
       
       .specs-list {
