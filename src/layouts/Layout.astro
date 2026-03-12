@@ -1,5 +1,7 @@
 ---
 import AgeGate from "../components/AgeGate.astro";
+import { ViewTransitions } from "astro:transitions";
+import BeerTransition from "../components/BeerTransition.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.scss";
@@ -47,10 +49,13 @@ const {
 		<meta property="twitter:title" content={`${title} | Willi Bevande`} />
 		<meta property="twitter:description" content={description} />
 		<meta property="twitter:image" content={new URL(image, Astro.url)} />
+		<ViewTransitions />
 	</head>
 	<body>
 		<!-- Age Gate Modal -->
 		<AgeGate />
+		
+		<BeerTransition />
 
 		<!-- Site Shell -->
 		<Header />

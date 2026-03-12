@@ -8,19 +8,19 @@ const base = import.meta.env.BASE_URL;
 export async function getStaticPaths() {
     const beers = await getCollection("beers");
 
-    return beers.map((beer) => ({
-        params: { slug: beer.slug },
-        props: { beer },
+    return beers.map((beerData: any) => ({
+        params: { slug: beerData.slug },
+        props: { beerData },
     }));
 }
 
-const { beer } = Astro.props;
+const { beerData: beer } = Astro.props;
 const { Content } = await beer.render();
 
 const pageTitle = `${beer.data.title} | Willi Bevande`;
 
 // Coerenzia con il catalogo Svelte
-const getBeerImage = (beerData) => {
+const getBeerImage = (beerData: any) => {
     const style = beerData.style.toLowerCase();
     const title = beerData.title.toLowerCase();
 
@@ -100,7 +100,7 @@ const getBeerImage = (beerData) => {
                             <span class="label">Disponibilità</span>
                             <div class="formats-list">
                                 {
-                                    beer.data.format.map((f) => (
+                                    beer.data.format.map((f: string) => (
                                         <span class="format-tag">{f}</span>
                                     ))
                                 }
