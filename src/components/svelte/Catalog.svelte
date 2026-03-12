@@ -74,6 +74,7 @@
   let selectedFormat = '';
   // Inizializza temporaneamente, sovrascritto in onMount o reattivamente
   let maxAbv = 15;
+  let searchQuery = '';
 
   // Variabile per evitare loop infiniti durante il primo caricamento
   let isInitializing = true;
@@ -123,11 +124,8 @@
     // Listener per il pulsante "Torna ai filtri"
     const handleScroll = () => {
       if (window.innerWidth > 900) {
-        const filtersPanel = document.querySelector('.filters-panel');
-        if (filtersPanel) {
-          const rect = filtersPanel.getBoundingClientRect();
-          showScrollToFilters = rect.bottom < 60; 
-        }
+        // Disabilitato il pulsante di ritorno su Desktop
+        showScrollToFilters = false;
       } else {
         // Su mobile attiviamo il clone dopo che il pulsante originale scompare (circa 450px)
         showScrollToFilters = window.scrollY > 450;
@@ -183,7 +181,19 @@
     const matchFormat = selectedFormat === '' || beer.data.format.includes(selectedFormat);
     const matchAbv = beer.data.abv <= maxAbv;
 
-    return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAbv;
+    // Logica di ricerca universale
+    const searchLower = searchQuery.toLowerCase().trim();
+    const matchSearch = searchQuery === '' || (
+      beer.data.title.toLowerCase().includes(searchLower) ||
+      beer.data.style.toLowerCase().includes(searchLower) ||
+      beer.data.color.toLowerCase().includes(searchLower) ||
+      beer.data.brand.toLowerCase().includes(searchLower) ||
+      beer.data.country.toLowerCase().includes(searchLower) ||
+      beer.data.format.some(f => f.toLowerCase().includes(searchLower)) ||
+      beer.data.abv.toString().includes(searchLower)
+    );
+
+    return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAbv && matchSearch;
   });
 
   function resetFilters() {
@@ -192,6 +202,7 @@
     selectedColor = '';
     selectedCountry = '';
     selectedFormat = '';
+    searchQuery = '';
     maxAbv = actualMaxAbv;
   }
 
@@ -253,6 +264,19 @@
       </div>
       
       <div class="filters-scroll">
+        <div class="filter-group search-group">
+          <label for="search">Cerca nel catalogo</label>
+          <div class="search-input-wrapper">
+            <input 
+              type="text" 
+              id="search" 
+              placeholder="Cerca..." 
+              bind:value={searchQuery}
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+        </div>
+
         <div class="filter-group">
           <label for="brand">Marca</label>
           <select id="brand" bind:value={selectedBrand}>
@@ -435,8 +459,22 @@
   .filters-panel {
     background: transparent;
     padding: 0;
-    position: relative; 
+    position: sticky;
+    top: 2rem; /* Distanza dall'alto quando si scolla su desktop */
     display: block;
+    height: auto;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    scrollbar-width: thin; /* Barre laterali sottili per il pannello se necessario */
+    
+    // Rimuoviamo lo scroll visibile a meno che non sia necessario
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #eee;
+      border-radius: 10px;
+    }
 
     h3 {
       font-size: 0.85rem;
@@ -455,6 +493,15 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      @media (min-width: 901px) {
+        .btn-close-filters {
+          display: none !important;
+        }
+        h3 {
+          margin-bottom: 2rem;
+        }
+      }
     }
 
     .btn-close-filters {
@@ -582,6 +629,42 @@
       padding: 15px 0;
       display: flex;
       align-items: center;
+    }
+
+    /* SEARCH STYLES */
+    &.search-group {
+      margin-bottom: 2.5rem;
+      
+      .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        input {
+          width: 100%;
+          padding: 0.8rem 1rem 0.8rem 2.8rem;
+          background: #f4f4f4;
+          border: 1px solid #eee;
+          border-radius: 4px;
+          font-family: inherit;
+          font-size: 0.85rem;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+          }
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 1rem;
+          color: #999;
+          pointer-events: none;
+        }
+      }
     }
 
     input[type="range"] {
