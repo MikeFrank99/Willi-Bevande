@@ -226,9 +226,10 @@
     isFiltersOpen = !isFiltersOpen;
     if (isFiltersOpen) {
       document.body.style.overflow = 'hidden';
-      // Rimosso scrollTo per mantenere la posizione originale
+      document.body.classList.add('filters-open');
     } else {
       document.body.style.overflow = '';
+      document.body.classList.remove('filters-open');
     }
   }
 </script>
@@ -571,7 +572,7 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    z-index: 1000;
+    z-index: 1500;
   }
 
   .sidebar-footer-mobile {
@@ -1100,7 +1101,7 @@
       width: 90%;
       max-width: 400px;
       height: 100vh;
-      z-index: 1001;
+      z-index: 2000;
       padding: 3rem 2rem;
       margin: 0;
       transform: translateX(100%);
