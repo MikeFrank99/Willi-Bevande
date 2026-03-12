@@ -129,8 +129,8 @@
           showScrollToFilters = rect.bottom < 60; 
         }
       } else {
-        // Su mobile usiamo lo scroll assoluto per semplicità e affidabilità
-        showScrollToFilters = window.scrollY > 600;
+        // Su mobile attiviamo il clone dopo che il pulsante originale scompare (circa 450px)
+        showScrollToFilters = window.scrollY > 450;
       }
     };
 
@@ -215,6 +215,7 @@
     isFiltersOpen = !isFiltersOpen;
     if (isFiltersOpen) {
       document.body.style.overflow = 'hidden';
+      // Rimosso scrollTo per mantenere la posizione originale
     } else {
       document.body.style.overflow = '';
     }
@@ -226,10 +227,10 @@
   <div class="mobile-actions">
     <button class="btn-toggle-filters" on:click={toggleFilters}>
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
-      Filtri
+      <span>FILTRI</span>
     </button>
     <div class="results-info-mobile">
-      Mostrando <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'prodotto' : 'prodotti'}
+      MOSTRANDO <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'PRODOTTO' : 'PRODOTTI'}
     </div>
   </div>
 
@@ -359,14 +360,14 @@
     </aside>
 
     <!-- Pulsante Sticky per tornare ai filtri (Fuori da aside per essere davvero sticky) -->
-    {#if showScrollToFilters}
+    {#if showScrollToFilters && !isFiltersOpen}
       <div 
         class="sticky-back-container" 
         transition:fly={{ y: -80, duration: 500, easing: backOut }}
       >
-        <button class="btn-back-to-filters" on:click={scrollToFilters}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-          Modifica Filtri
+        <button class="btn-toggle-filters floating-mobile-clone" on:click={toggleFilters}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
+          <span>FILTRI</span>
         </button>
       </div>
     {/if}
@@ -464,7 +465,31 @@
       color: #333;
       cursor: pointer;
       line-height: 1;
-      padding: 0;
+    }
+  }
+
+  .btn-toggle-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.3s;
+
+    &:hover {
+      background: var(--color-primary);
+    }
+
+    span, svg {
+      color: white !important;
     }
   }
 
@@ -474,38 +499,23 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    position: relative; /* Changed from sticky */
+    position: relative;
     z-index: 10;
     background: transparent;
     padding: 1rem 0;
     border-bottom: 1px solid #f0f0f0;
 
-    .btn-toggle-filters {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: #1a1a1a;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.3s;
-
-      &:hover {
-        background: var(--color-primary);
-      }
-    }
-
     .results-info-mobile {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      color: #999;
+      color: #bbb;
       letter-spacing: 0.5px;
+      font-weight: 600;
+
+      strong {
+        color: #666;
+        font-weight: 800;
+      }
     }
   }
 
@@ -720,18 +730,6 @@
     &:hover svg {
       transform: translateY(-2px);
     }
-
-    @media (max-width: 900px) {
-      width: auto;
-      white-space: nowrap;
-      padding: 0.7rem 1.4rem;
-      font-size: 0.7rem;
-      border-radius: 50px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      background: rgba(26, 26, 26, 0.9);
-    }
   }
 
   @media (max-width: 900px) {
@@ -746,8 +744,16 @@
       margin-top: 0;
       z-index: 2000;
       pointer-events: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    .floating-mobile-clone {
+       pointer-events: auto;
+       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
   }
+
 
 
 
