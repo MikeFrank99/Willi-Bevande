@@ -1,10 +1,13 @@
 ---
+import { Image } from "astro:assets";
+import logoWhite from "../assets/logos/Willi_Logo_White.svg";
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="main-footer">
     <div class="container footer-content">
         <div class="footer-column branding">
+            <Image src={logoWhite} alt="Willi Logo" width={60} height={40} class="footer-logo" />
             <h3>Willi Bevande</h3>
             <p>
                 Selezione e distribuzione delle migliori birre artigianali e
@@ -56,6 +59,8 @@ const currentYear = new Date().getFullYear();
         color: #e0e0e0;
         padding-top: 3rem;
         margin-top: 4rem;
+        position: relative;
+        z-index: 10;
 
         .footer-content {
             display: grid;
@@ -68,6 +73,13 @@ const currentYear = new Date().getFullYear();
             color: var(--color-primary);
             font-size: 1.5rem;
             margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            height: 40px;
+            width: auto;
+            margin-bottom: 1.5rem;
+            display: block;
         }
 
         h4 {

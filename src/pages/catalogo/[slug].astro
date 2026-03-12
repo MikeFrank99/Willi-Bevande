@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import logoBeer from "../../assets/logos/Willi_Logo_Beer.svg";
 const base = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
@@ -23,21 +24,30 @@ const getBeerImage = (beerData) => {
     const style = beerData.style.toLowerCase();
     const title = beerData.title.toLowerCase();
 
-    if (style.includes('rossa') || style.includes('red') || style.includes('stout') || style.includes('scura') || title.includes('sixtus')) {
-      return `${base}images/red_placeholder.png`;
+    if (
+        style.includes("rossa") ||
+        style.includes("red") ||
+        style.includes("stout") ||
+        style.includes("scura") ||
+        title.includes("sixtus")
+    ) {
+        return `${base}images/red_placeholder.png`;
     }
-    if (style.includes('dark') || title.includes('stout')) {
-      return `${base}images/dark_placeholder.png`;
+    if (style.includes("dark") || title.includes("stout")) {
+        return `${base}images/dark_placeholder.png`;
     }
     // Default to blonde
     return `${base}images/blonde_placeholder.png`;
-}
+};
 ---
 
-<Layout
-    title={pageTitle}
-    description={beer.data.description}
->
+<Layout title={pageTitle} description={beer.data.description}>
+    <div class="watermark-container">
+        <div class="background-logo-full">
+            <img src={logoBeer.src} alt="" />
+        </div>
+    </div>
+
     <div class="container section-padding">
         <div class="back-link">
             <a href={`${base}catalogo/`} id="back-btn">← Torna al Catalogo</a>
@@ -48,9 +58,9 @@ const getBeerImage = (beerData) => {
                 <!-- Image Section -->
                 <div class="product-image">
                     <div class="image-box">
-                        <img 
-                            src={getBeerImage(beer.data)} 
-                            alt={beer.data.title} 
+                        <img
+                            src={getBeerImage(beer.data)}
+                            alt={beer.data.title}
                             class="main-img"
                         />
                     </div>
@@ -59,7 +69,13 @@ const getBeerImage = (beerData) => {
                 <!-- Info Section -->
                 <div class="product-info">
                     <header>
-                        <p class="brand">{beer.data.brand}</p>
+                        <p class="brand">
+                            <a
+                                href={`${base}catalogo/?brand=${encodeURIComponent(beer.data.brand)}`}
+                            >
+                                {beer.data.brand}
+                            </a>
+                        </p>
                         <h1>{beer.data.title}</h1>
                     </header>
 
@@ -83,9 +99,11 @@ const getBeerImage = (beerData) => {
                         <div class="spec-row formats-row">
                             <span class="label">Disponibilità</span>
                             <div class="formats-list">
-                                {beer.data.format.map((f) => (
-                                    <span class="format-tag">{f}</span>
-                                ))}
+                                {
+                                    beer.data.format.map((f) => (
+                                        <span class="format-tag">{f}</span>
+                                    ))
+                                }
                             </div>
                         </div>
                     </div>
@@ -98,8 +116,14 @@ const getBeerImage = (beerData) => {
                     </div>
 
                     <div class="cta-box">
-                        <p>Sei un professionista Ho.Re.Ca? Richiedi il listino prezzi riservato.</p>
-                        <a href="mailto:ordini@willibevande.it" class="btn-primary">Richiedi Informazioni</a>
+                        <p>
+                            Sei un professionista Ho.Re.Ca? Richiedi il listino
+                            prezzi riservato.
+                        </p>
+                        <a
+                            href="mailto:ordini@willibevande.it"
+                            class="btn-primary">Richiedi Informazioni</a
+                        >
                     </div>
                 </div>
             </div>
@@ -112,7 +136,10 @@ const getBeerImage = (beerData) => {
         const backBtn = document.getElementById("back-btn");
         if (backBtn) {
             backBtn.addEventListener("click", (e) => {
-                if (window.history.length > 1 && document.referrer.includes(window.location.host)) {
+                if (
+                    window.history.length > 1 &&
+                    document.referrer.includes(window.location.host)
+                ) {
                     e.preventDefault();
                     window.history.back();
                 }
@@ -146,12 +173,49 @@ const getBeerImage = (beerData) => {
         grid-template-columns: 1fr 1fr;
         gap: 5rem;
         align-items: start;
+        position: relative;
+        z-index: 2;
+    }
+
+    .beer-detail {
+        position: relative;
+    }
+
+    .watermark-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .background-logo-full {
+        position: absolute;
+        top: 200px;
+        right: -500px;
+        transform: rotate(90deg);
+        opacity: 0.15;
+        width: 1200px;
+        user-select: none;
+
+        img {
+            width: 100%;
+            height: auto;
+            filter: grayscale(1);
+        }
+
+        @media (max-width: 900px) {
+            right: -450px;
+            width: 800px;
+            top: 200px;
+        }
     }
 
     .product-image {
         position: sticky;
         top: 120px;
-        
+
         .image-box {
             background: #fff;
             padding: 0;
@@ -168,7 +232,7 @@ const getBeerImage = (beerData) => {
                 object-fit: cover;
                 transition: transform 0.5s ease;
             }
-            
+
             &:hover img {
                 transform: scale(1.05);
             }
@@ -178,7 +242,7 @@ const getBeerImage = (beerData) => {
     .product-info {
         header {
             margin-bottom: 3rem;
-            
+
             .brand {
                 color: var(--color-primary);
                 text-transform: uppercase;
@@ -186,6 +250,16 @@ const getBeerImage = (beerData) => {
                 font-size: 0.8rem;
                 font-weight: 700;
                 margin-bottom: 0.5rem;
+
+                a {
+                    color: inherit;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+
+                    &:hover {
+                        color: var(--color-secondary);
+                    }
+                }
             }
 
             h1 {
@@ -212,7 +286,7 @@ const getBeerImage = (beerData) => {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            
+
             &.formats-row {
                 align-items: flex-start;
                 flex-direction: column;
@@ -258,7 +332,7 @@ const getBeerImage = (beerData) => {
 
     .description-area {
         margin-bottom: 4rem;
-        
+
         h3 {
             font-size: 1.2rem;
             text-transform: uppercase;
@@ -272,9 +346,14 @@ const getBeerImage = (beerData) => {
             font-size: 1.1rem;
             line-height: 1.7;
             color: #555;
-            
-            :global(p) { margin-bottom: 1.5rem; }
-            :global(strong) { color: #222; font-weight: 700; }
+
+            :global(p) {
+                margin-bottom: 1.5rem;
+            }
+            :global(strong) {
+                color: #222;
+                font-weight: 700;
+            }
         }
     }
 
@@ -302,7 +381,7 @@ const getBeerImage = (beerData) => {
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
-            
+
             &:hover {
                 background: var(--color-primary-dark);
                 transform: translateY(-2px);
@@ -323,7 +402,7 @@ const getBeerImage = (beerData) => {
         .product-info header h1 {
             font-size: 2.2rem;
         }
-        
+
         .specs-box .spec-row .value.accent {
             font-size: 1.2rem;
         }
