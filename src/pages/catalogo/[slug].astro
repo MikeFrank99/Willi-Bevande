@@ -26,7 +26,7 @@ const formatIcons: Record<string, any> = {
 };
 
 const sortFormats = (formats: string[]) => {
-    const order = ["Bottiglia", "Lattina", "Fusto"];
+    const order = ["Lattina", "Bottiglia", "Fusto"];
     return [...formats].sort((a, b) => {
         const scoreA = order.findIndex((o) => a.startsWith(o));
         const scoreB = order.findIndex((o) => b.startsWith(o));

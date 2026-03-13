@@ -25,7 +25,7 @@
   };
 
   const sortFormats = (formats: string[]) => {
-    const order = ["Bottiglia", "Lattina", "Fusto"];
+    const order = ["Lattina", "Bottiglia", "Fusto"];
     return [...formats].sort((a, b) => {
       const scoreA = order.findIndex((o) => a.startsWith(o));
       const scoreB = order.findIndex((o) => b.startsWith(o));
@@ -39,7 +39,7 @@
     
     const sorted = sortFormats(formats);
     const selected: string[] = [];
-    const categories = ["Bottiglia", "Lattina", "Fusto"];
+    const categories = ["Lattina", "Bottiglia", "Fusto"];
     
     // 1. Ensure at least one per category
     categories.forEach(cat => {
@@ -350,10 +350,6 @@
                   <span class="label">Grad.</span>
                   <span class="value accent">{beer.data.abv}%</span>
                 </div>
-                <div class="spec-group">
-                  <span class="label">Formati</span>
-                  <span class="value"></span>
-                </div>
               </div>
 
               <div class="card-formats">
@@ -444,14 +440,14 @@
     }
     .card-formats {
       display: flex;
-      justify-content: flex-start;
-      margin-top: 0.7rem;
+      justify-content: center;
+      margin-top: 1rem;
       padding-top: 0;
       border-top: none;
 
       .icons-row {
         display: flex;
-        justify-content: flex-start;
+        justify-content: center;
         gap: 0.8rem;
       }
 
@@ -464,7 +460,7 @@
       }
       
       .card-format-icon {
-        height: 28px;
+        height: 32px;
         width: auto;
         max-width: none;
         object-fit: contain;
@@ -519,11 +515,11 @@
       }
       .specs-list { gap: 0.4rem; padding-top: 0.8rem; .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } }
       .card-formats {
-        margin-top: 0.5rem;
+        margin-top: 0.8rem;
         padding-top: 0;
-        .icons-row { gap: 0.3rem; }
+        .icons-row { gap: 0.6rem; justify-content: center; }
         .format-icon-wrapper { width: auto; }
-        .card-format-icon { height: 24px; width: auto; }
+        .card-format-icon { height: 28px; width: auto; }
         .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
       }
     }
