@@ -474,7 +474,7 @@
       .more-indicator {
         position: absolute;
         bottom: 3px;
-        right: -13px;
+        right: -16px;
         font-size: 0.7rem;
         font-weight: 800;
         color: #bbb;
@@ -524,7 +524,7 @@
         .icons-row { gap: 0.6rem; }
         .format-icon-wrapper { width: 18px; }
         .card-format-icon { height: 28px; width: 42px; }
-        .more-indicator { font-size: 0.6rem; right: -11px; bottom: 2px; }
+        .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
       }
     }
   }

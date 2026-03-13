@@ -134,26 +134,27 @@ const getBeerImage = (beerData: any) => {
                             <span class="label">Nazione</span>
                             <span class="value">{beer.data.country}</span>
                         </div>
-                        <div class="spec-row formats-row">
+                        <div class="spec-row">
                             <span class="label">Formati disponibili</span>
-                            <div class="format-icons-container">
-                                {
-                                    sortFormats(beer.data.format).map((f: string) => {
-                                        const icon = formatIcons[f];
-                                        return (
-                                            <div class="format-item" title={f}>
-                                                {icon && (
-                                                    <img
-                                                        src={icon.src}
-                                                        alt={f}
-                                                        class="format-icon"
-                                                    />
-                                                )}
-                                            </div>
-                                        );
-                                    })
-                                }
-                            </div>
+                            <span class="value"></span>
+                        </div>
+                        <div class="format-icons-container">
+                            {
+                                sortFormats(beer.data.format).map((f: string) => {
+                                    const icon = formatIcons[f];
+                                    return (
+                                        <div class="format-item" title={f}>
+                                            {icon && (
+                                                <img
+                                                    src={icon.src}
+                                                    alt={f}
+                                                    class="format-icon"
+                                                />
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            }
                         </div>
                     </div>
 
@@ -343,12 +344,7 @@ const getBeerImage = (beerData: any) => {
             display: flex;
             justify-content: space-between;
             align-items: center;
-
-            &.formats-row {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 1rem;
-            }
+            min-height: 2.5rem; /* Ensure consistent height even if value is empty */
 
             .label {
                 font-size: 0.75rem;
@@ -375,9 +371,11 @@ const getBeerImage = (beerData: any) => {
     .format-icons-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 2rem;
-        margin-top: 1.2rem;
+        gap: 1.5rem;
+        margin-top: 0.5rem; /* Increased distance from the label above */
+        margin-bottom: 0;
         align-items: center;
+        justify-content: flex-start;
 
         .format-item {
             display: flex;
