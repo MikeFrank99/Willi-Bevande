@@ -413,7 +413,7 @@
   @media (max-width: 900px) { .catalog-layout { grid-template-columns: 1fr; padding: 0 0 3rem; gap: 0; } .results-info { display: none; } .mobile-actions { display: flex; } }
   @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; } }
   .beer-card {
-    text-decoration: none; display: flex; flex-direction: column; padding: 0 1.5rem 2.5rem 1.5rem; background: #ffffff; border: 1px solid #f0f0f0; transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1); position: relative; height: 100%; border-radius: 0; overflow: hidden;
+    text-decoration: none; display: flex; flex-direction: column; padding: 0 1.5rem 1.5rem 1.5rem; background: #ffffff; border: 1px solid #f0f0f0; transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1); position: relative; height: 100%; border-radius: 0; overflow: hidden;
     &:before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--color-primary); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
     .img-wrapper {
       aspect-ratio: 1 / 1; background: #ffffff; display: flex; justify-content: center; align-items: center; margin: 0 -1.5rem 1.5rem -1.5rem; border: none; border-bottom: 1px solid #f0f0f0; position: relative; transition: all 0.5s ease; overflow: hidden; z-index: 1;
@@ -445,7 +445,7 @@
     .card-formats {
       display: flex;
       justify-content: flex-start;
-      margin-top: 0.45rem;
+      margin-top: 0.7rem;
       padding-top: 0;
       border-top: none;
 
@@ -459,13 +459,13 @@
         position: relative;
         display: flex;
         align-items: center;
-        width: 22px;
+        width: auto;
         justify-content: center;
       }
       
       .card-format-icon {
-        height: 32px;
-        width: 48px;
+        height: 28px;
+        width: auto;
         max-width: none;
         object-fit: contain;
         filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.08));
@@ -498,7 +498,7 @@
       .sidebar-footer-mobile { display: block; }
     }
     .beer-card {
-      padding: 0 0.8rem 1.5rem 0.8rem;
+      padding: 0 0.8rem 1.2rem 0.8rem;
       
       .card-info {
         padding-top: 0.5rem;
@@ -519,11 +519,11 @@
       }
       .specs-list { gap: 0.4rem; padding-top: 0.8rem; .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } }
       .card-formats {
-        margin-top: 0.35rem;
+        margin-top: 0.5rem;
         padding-top: 0;
-        .icons-row { gap: 0.6rem; }
-        .format-icon-wrapper { width: 18px; }
-        .card-format-icon { height: 28px; width: 42px; }
+        .icons-row { gap: 0.3rem; }
+        .format-icon-wrapper { width: auto; }
+        .card-format-icon { height: 24px; width: auto; }
         .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
       }
     }
