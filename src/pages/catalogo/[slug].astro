@@ -3,6 +3,44 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import logoBeer from "../../assets/logos/Willi_Logo_Beer.svg";
+
+// Format Icons
+import bottiglia30cl from "../../assets/images/icons/bottiglia_30cl.svg";
+import bottiglia33cl from "../../assets/images/icons/bottiglia_33cl.svg";
+import bottiglia50cl from "../../assets/images/icons/bottiglia_50cl.svg";
+import bottiglia66cl from "../../assets/images/icons/bottiglia_66cl.svg";
+import bottiglia75cl from "../../assets/images/icons/bottiglia_75cl.svg";
+import fusto20l from "../../assets/images/icons/fusto_20l.svg";
+import fusto30l from "../../assets/images/icons/fusto_30l.svg";
+import lattina33cl from "../../assets/images/icons/lattina_33cl.svg";
+
+const formatIcons: Record<string, any> = {
+    "Bottiglia 30cl": bottiglia30cl,
+    "Bottiglia 33cl": bottiglia33cl,
+    "Bottiglia 50cl": bottiglia50cl,
+    "Bottiglia 66cl": bottiglia66cl,
+    "Bottiglia 75cl": bottiglia75cl,
+    "Fusto 20L": fusto20l,
+    "Fusto 30L": fusto30l,
+    "Lattina 33cl": lattina33cl,
+};
+
+const sortFormats = (formats: string[]) => {
+    const order = ["Bottiglia", "Lattina", "Fusto"];
+    return [...formats].sort((a, b) => {
+        const scoreA = order.findIndex((o) => a.startsWith(o));
+        const scoreB = order.findIndex((o) => b.startsWith(o));
+
+        if (scoreA !== scoreB) return scoreA - scoreB;
+
+        // Sort by size within the same category
+        return a.localeCompare(b, undefined, {
+            numeric: true,
+            sensitivity: "base",
+        });
+    });
+};
+
 const base = import.meta.env.BASE_URL;
 
 export async function getStaticPaths() {
@@ -97,12 +135,23 @@ const getBeerImage = (beerData: any) => {
                             <span class="value">{beer.data.country}</span>
                         </div>
                         <div class="spec-row formats-row">
-                            <span class="label">Disponibilità</span>
-                            <div class="formats-list">
+                            <span class="label">Formati disponibili</span>
+                            <div class="format-icons-container">
                                 {
-                                    beer.data.format.map((f: string) => (
-                                        <span class="format-tag">{f}</span>
-                                    ))
+                                    sortFormats(beer.data.format).map((f: string) => {
+                                        const icon = formatIcons[f];
+                                        return (
+                                            <div class="format-item" title={f}>
+                                                {icon && (
+                                                    <img
+                                                        src={icon.src}
+                                                        alt={f}
+                                                        class="format-icon"
+                                                    />
+                                                )}
+                                            </div>
+                                        );
+                                    })
                                 }
                             </div>
                         </div>
@@ -132,7 +181,7 @@ const getBeerImage = (beerData: any) => {
 </Layout>
 
 <script>
-    document.addEventListener("astro:page-load", () => {
+    const initBackBtn = () => {
         const backBtn = document.getElementById("back-btn");
         if (backBtn) {
             backBtn.addEventListener("click", (e) => {
@@ -145,6 +194,14 @@ const getBeerImage = (beerData: any) => {
                 }
             });
         }
+    };
+
+    // Run on standard load
+    initBackBtn();
+
+    // Run on navigation if View Transitions are enabled
+    document.addEventListener("astro:page-load", () => {
+        initBackBtn();
     });
 </script>
 
@@ -315,18 +372,30 @@ const getBeerImage = (beerData: any) => {
         }
     }
 
-    .formats-list {
+    .format-icons-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.6rem;
+        gap: 2rem;
+        margin-top: 1.2rem;
+        align-items: center;
 
-        .format-tag {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #666;
-            background: #f9f9f9;
-            padding: 0.4rem 0.8rem;
-            border: 1px solid #eee;
+        .format-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .format-icon {
+                height: 55px;
+                width: auto;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+                display: block;
+                transition: transform 0.3s ease;
+            }
+
+            &:hover .format-icon {
+                transform: translateY(-5px);
+                filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+            }
         }
     }
 
