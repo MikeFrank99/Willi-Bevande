@@ -709,21 +709,26 @@
       padding: 0 0.8rem 1.2rem 0.8rem;
       
       .card-info {
-        padding-top: 0.5rem;
+        padding-top: 0.2rem;
       }
       
       .img-wrapper {
-        margin: 0 -0.8rem 1rem -0.8rem;
+        margin: 0 -0.8rem 0.6rem -0.8rem;
       }
       
       .content {
-        height: 70px;
-        margin-bottom: 1rem;
+        height: auto;
+        min-height: 48px;
+        margin-bottom: 0.6rem;
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         h4 {
-          font-size: 0.95rem;
+          font-size: 0.85rem;
+          line-height: 1.2;
+          margin-bottom: 0.1rem;
         }
-        .brand { margin: 0.2rem 0 0.5rem; font-size: 0.6rem; }
+        .brand { margin: 0; font-size: 0.5rem; line-height: 1.2; }
       }
       .specs-list { gap: 0.4rem; padding-top: 0.8rem; .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } }
       .card-formats {
