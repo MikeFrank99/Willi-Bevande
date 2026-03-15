@@ -88,42 +88,101 @@
   let searchQuery = '';
 
   // Sottoinsiemi reattivi incrociati
-  $: beersForBrand = initialBeers.filter(beer => (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForStyle = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForColor = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedCountry === '' || beer.data.country === selectedCountry) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForCountry = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedFormat === '' || beer.data.format.includes(selectedFormat)) && (beer.data.abv <= maxAbv));
-  $: beersForFormat = initialBeers.filter(beer => (selectedBrand === '' || beer.data.brand === selectedBrand) && (selectedStyle === '' || beer.data.style === selectedStyle) && (selectedColor === '' || beer.data.color === selectedColor) && (selectedCountry === '' || beer.data.country === selectedCountry) && (beer.data.abv <= maxAbv));
+  // Ogni "beersForX" esclude il filtro X stesso, così le opzioni di X mostrano
+  // quanti risultati si avrebbero con tutti gli altri filtri attivi.
+  $: beersForBrand = initialBeers.filter(beer =>
+    (selectedStyle === '' || beer.data.style === selectedStyle) &&
+    (selectedColor === '' || beer.data.color === selectedColor) &&
+    (selectedCountry === '' || beer.data.country === selectedCountry) &&
+    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (beer.data.abv <= maxAbv)
+  );
+  $: beersForStyle = initialBeers.filter(beer =>
+    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
+    (selectedColor === '' || beer.data.color === selectedColor) &&
+    (selectedCountry === '' || beer.data.country === selectedCountry) &&
+    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (beer.data.abv <= maxAbv)
+  );
+  $: beersForColor = initialBeers.filter(beer =>
+    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
+    (selectedStyle === '' || beer.data.style === selectedStyle) &&
+    (selectedCountry === '' || beer.data.country === selectedCountry) &&
+    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (beer.data.abv <= maxAbv)
+  );
+  $: beersForCountry = initialBeers.filter(beer =>
+    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
+    (selectedStyle === '' || beer.data.style === selectedStyle) &&
+    (selectedColor === '' || beer.data.color === selectedColor) &&
+    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (beer.data.abv <= maxAbv)
+  );
+  $: beersForFormat = initialBeers.filter(beer =>
+    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
+    (selectedStyle === '' || beer.data.style === selectedStyle) &&
+    (selectedColor === '' || beer.data.color === selectedColor) &&
+    (selectedCountry === '' || beer.data.country === selectedCountry) &&
+    (beer.data.abv <= maxAbv)
+  );
 
-  // Calcolo dei valori univoci e dinamici
-  $: brands = [...new Set(initialBeers.map(b => b.data.brand))]
-    .sort()
-    .map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }))
-    .filter(b => b.count > 0);
-  
-  $: styles = [...new Set(initialBeers.map(b => b.data.style))]
-    .sort()
-    .map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }))
-    .filter(s => s.count > 0);
-  
-  $: colors = [...new Set(initialBeers.map(b => b.data.color))]
-    .sort()
-    .map(val => ({ name: val, count: beersForColor.filter(b => b.data.color === val).length }))
-    .filter(c => c.count > 0);
-  
-  $: countries = [...new Set(initialBeers.map(b => b.data.country))]
-    .sort()
-    .map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }))
-    .filter(c => c.count > 0);
-  
-  $: formats = [...new Set(initialBeers.flatMap(b => b.data.format))]
-    .sort()
-    .map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }))
-    .filter(f => f.count > 0);
-  
+  // --- BUG FIX: le opzioni includono SEMPRE il valore selezionato ---
+  // Per ogni filtro costruiamo la lista di opzioni garantendo che il valore
+  // attivo compaia sempre, anche se il suo count nel contesto incrociato è 0.
+  // Questo impedisce al <select> di mostrare un'opzione vuota.
+
+  $: brands = (() => {
+    const allValues = [...new Set(initialBeers.map(b => b.data.brand))].sort();
+    return allValues
+      .map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }))
+      .filter(b => b.count > 0 || b.name === selectedBrand);
+  })();
+
+  $: styles = (() => {
+    const allValues = [...new Set(initialBeers.map(b => b.data.style))].sort();
+    return allValues
+      .map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }))
+      .filter(s => s.count > 0 || s.name === selectedStyle);
+  })();
+
+  $: colors = (() => {
+    const allValues = [...new Set(initialBeers.map(b => b.data.color))].sort();
+    return allValues
+      .map(val => ({ name: val, count: beersForColor.filter(b => b.data.color === val).length }))
+      .filter(c => c.count > 0 || c.name === selectedColor);
+  })();
+
+  $: countries = (() => {
+    const allValues = [...new Set(initialBeers.map(b => b.data.country))].sort();
+    return allValues
+      .map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }))
+      .filter(c => c.count > 0 || c.name === selectedCountry);
+  })();
+
+  $: formats = (() => {
+    const allValues = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
+    return allValues
+      .map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }))
+      .filter(f => f.count > 0 || f.name === selectedFormat);
+  })();
+
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
   $: actualMinAbv = abvs.length > 0 ? abvs[0] : 0;
   $: actualMaxAbv = abvs.length > 0 ? abvs[abvs.length - 1] : 15;
+
+  // Tag filtri attivi
+  $: activeFilterTags = [
+    ...(selectedBrand ? [{ key: 'brand', label: `Marca: ${selectedBrand}`, clear: () => { selectedBrand = ''; } }] : []),
+    ...(selectedStyle ? [{ key: 'style', label: `Stile: ${selectedStyle}`, clear: () => { selectedStyle = ''; } }] : []),
+    ...(selectedColor ? [{ key: 'color', label: `Colore: ${selectedColor}`, clear: () => { selectedColor = ''; } }] : []),
+    ...(selectedCountry ? [{ key: 'country', label: `Nazione: ${selectedCountry}`, clear: () => { selectedCountry = ''; } }] : []),
+    ...(selectedFormat ? [{ key: 'format', label: `Formato: ${selectedFormat}`, clear: () => { selectedFormat = ''; } }] : []),
+    ...(maxAbv < actualMaxAbv ? [{ key: 'abv', label: `Grad. max: ${maxAbv}%`, clear: () => { maxAbv = actualMaxAbv; } }] : []),
+    ...(searchQuery ? [{ key: 'search', label: `Cerca: "${searchQuery}"`, clear: () => { searchQuery = ''; } }] : []),
+  ];
+
+  $: hasActiveFilters = activeFilterTags.length > 0;
 
   let isInitializing = true;
 
@@ -221,6 +280,9 @@
     <button class="btn-toggle-filters" on:click={toggleFilters}>
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
       <span>FILTRI</span>
+      {#if hasActiveFilters}
+        <span class="filter-badge">{activeFilterTags.length}</span>
+      {/if}
     </button>
     <div class="results-info-mobile">
       MOSTRANDO <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'PRODOTTO' : 'PRODOTTI'}
@@ -252,7 +314,7 @@
           <select id="brand" bind:value={selectedBrand}>
             <option value="">Tutte le marche ({beersForBrand.length})</option>
             {#each brands as b}
-              <option value={b.name}>{b.name} ({b.count})</option>
+              <option value={b.name} class:option-zero={b.count === 0}>{b.name} ({b.count})</option>
             {/each}
           </select>
         </div>
@@ -262,7 +324,7 @@
           <select id="style" bind:value={selectedStyle}>
             <option value="">Tutti gli stili ({beersForStyle.length})</option>
             {#each styles as s}
-              <option value={s.name}>{s.name} ({s.count})</option>
+              <option value={s.name} class:option-zero={s.count === 0}>{s.name} ({s.count})</option>
             {/each}
           </select>
         </div>
@@ -272,7 +334,7 @@
           <select id="color" bind:value={selectedColor}>
             <option value="">Tutti i colori ({beersForColor.length})</option>
             {#each colors as c}
-              <option value={c.name}>{c.name} ({c.count})</option>
+              <option value={c.name} class:option-zero={c.count === 0}>{c.name} ({c.count})</option>
             {/each}
           </select>
         </div>
@@ -282,7 +344,7 @@
           <select id="country" bind:value={selectedCountry}>
             <option value="">Tutte le nazioni ({beersForCountry.length})</option>
             {#each countries as c}
-              <option value={c.name}>{c.name} ({c.count})</option>
+              <option value={c.name} class:option-zero={c.count === 0}>{c.name} ({c.count})</option>
             {/each}
           </select>
         </div>
@@ -292,7 +354,7 @@
           <select id="format" bind:value={selectedFormat}>
             <option value="">Tutti i formati ({beersForFormat.length})</option>
             {#each formats as f}
-              <option value={f.name}>{f.name} ({f.count})</option>
+              <option value={f.name} class:option-zero={f.count === 0}>{f.name} ({f.count})</option>
             {/each}
           </select>
         </div>
@@ -327,13 +389,31 @@
         <button class="btn-toggle-filters floating-mobile-clone" on:click={toggleFilters}>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="12" x2="14" y2="12"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
           <span>FILTRI</span>
+          {#if hasActiveFilters}
+            <span class="filter-badge">{activeFilterTags.length}</span>
+          {/if}
         </button>
       </div>
     {/if}
   </div>
 
   <main class="products-grid">
-    <div class="results-info"><p>Mostrando <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'prodotto' : 'prodotti'}</p></div>
+    <div class="results-header">
+      <div class="results-info"><p>Mostrando <strong>{filteredBeers.length}</strong> {filteredBeers.length === 1 ? 'prodotto' : 'prodotti'}</p></div>
+      {#if hasActiveFilters}
+        <div class="active-filters-bar" transition:fly={{ y: -12, duration: 250 }}>
+          {#each activeFilterTags as tag (tag.key)}
+            <button class="filter-tag" on:click={tag.clear} title="Rimuovi filtro">
+              <span>{tag.label}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          {/each}
+          <button class="filter-tag-reset" on:click={resetFilters}>
+            Azzera tutti
+          </button>
+        </div>
+      {/if}
+    </div>
     {#if filteredBeers.length === 0}
       <div class="no-results">Nessuna birra corrisponde ai criteri selezionati. <button on:click={resetFilters}>Prova a svuotare i filtri</button>.</div>
     {:else}
@@ -378,17 +458,68 @@
   .catalog-layout { display: grid; grid-template-columns: 240px 1fr; gap: 4rem; padding-top: 3rem; padding-bottom: 3rem; }
   .sidebar-column { position: relative; }
   .filters-panel {
-    background: transparent; padding: 0; position: sticky; top: 2rem; display: block; height: auto; max-height: calc(100vh - 4rem); overflow-y: auto; scrollbar-width: thin;
-    &::-webkit-scrollbar { width: 4px; }
-    &::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
+    background: transparent; padding: 0; position: sticky; top: 2rem; display: block; height: auto;
+    &::-webkit-scrollbar { display: none; }
     h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; color: #aaa; margin-top: 0; margin-bottom: 1.5rem; font-weight: 700; border: none; padding: 0; line-height: 1.2; }
     .sidebar-header { display: flex; justify-content: space-between; align-items: center; @media (min-width: 901px) { .btn-close-filters { display: none !important; } h3 { margin-bottom: 2rem; } } }
     .btn-close-filters { display: none; background: none; border: none; font-size: 2rem; color: #333; cursor: pointer; line-height: 1; }
+  }
+
+  // Compressione automatica a viewport basse (tablet landscape)
+  @media (min-width: 901px) and (max-height: 780px) {
+    .filters-panel h3 { margin-bottom: 1rem; font-size: 0.75rem; }
+    .filter-group {
+      margin-bottom: 1.2rem;
+      label { font-size: 0.72rem; margin-bottom: 0.25rem; }
+      select { font-size: 0.8rem; padding: 0.35rem 0; }
+      &.search-group { margin-bottom: 1.5rem;
+        .search-input-wrapper input { padding: 0.5rem 0.8rem 0.5rem 2.4rem; font-size: 0.8rem; }
+      }
+      .range-container { padding: 10px 0; }
+    }
+    .range-labels { font-size: 0.7rem; }
+    .btn-reset { padding: 0.6rem; font-size: 0.7rem; margin-top: 0.5rem; }
+  }
+
+  @media (min-width: 901px) and (max-height: 620px) {
+    .filters-panel h3 { margin-bottom: 0.5rem; }
+    .filter-group {
+      margin-bottom: 0.7rem;
+      label { font-size: 0.68rem; margin-bottom: 0.15rem; }
+      select { font-size: 0.75rem; padding: 0.2rem 0; }
+      &.search-group { margin-bottom: 0.9rem;
+        .search-input-wrapper input { padding: 0.35rem 0.7rem 0.35rem 2rem; font-size: 0.75rem; }
+      }
+      .range-container { padding: 6px 0; }
+    }
+    .range-labels { margin-top: 2px; }
+    .btn-reset { padding: 0.4rem; font-size: 0.65rem; margin-top: 0.3rem; }
   }
   .btn-toggle-filters { display: flex; align-items: center; gap: 0.75rem; background: #1a1a1a; color: white; border: none; padding: 0.8rem 1.5rem; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; border-radius: 4px; transition: background 0.3s; &:hover { background: var(--color-primary); } span, svg { color: white !important; } }
   .mobile-actions { display: none; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 2rem; position: relative; z-index: 10; background: transparent; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; .results-info-mobile { font-size: 0.7rem; text-transform: uppercase; color: #bbb; letter-spacing: 0.5px; font-weight: 600; strong { color: #666; font-weight: 800; } } }
   .filters-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1500; }
   .sidebar-footer-mobile { display: none; padding: 2rem 0; .btn-apply { width: 100%; padding: 1.2rem; background: var(--color-primary); color: white; border: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; } }
+
+  // Badge sul pulsante filtri (mobile)
+  .filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: #1a1a1a;
+    font-size: 0.65rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 99px;
+    padding: 0 4px;
+    line-height: 1;
+    margin-left: 2px;
+  }
+
+  // Opzioni con count 0 (filtro incompatibile ma valido)
+  :global(.option-zero) { color: #bbb; font-style: italic; }
+
   .filter-group {
     margin-bottom: 2rem;
     label { display: block; font-weight: 700; margin-bottom: 0.4rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-primary-dark); letter-spacing: 0.5px; }
@@ -403,7 +534,88 @@
   .sticky-back-container { position: sticky; top: 40px; left: 0; width: 100%; z-index: 100; pointer-events: none; margin-top: 1rem; }
   .btn-back-to-filters { pointer-events: auto; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.8rem; padding: 0.9rem; background: #1a1a1a; color: white; border: none; border-radius: 8px; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); &:hover { background: var(--color-primary); transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px rgba(212, 163, 115, 0.4); } &:active { transform: translateY(0); } svg { transition: transform 0.3s ease; } &:hover svg { transform: translateY(-2px); } }
   @media (max-width: 900px) { .sticky-back-container { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); width: auto; z-index: 2000; pointer-events: none; display: flex; justify-content: center; } .floating-mobile-clone { pointer-events: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); } }
-  .results-info { margin-bottom: 2.5rem; font-size: 0.9rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; p { margin: 0; line-height: 1.2; strong { color: var(--color-primary-dark); } } }
+
+  // Intestazione risultati + tag filtri attivi
+  .results-header {
+    margin-bottom: 2.5rem;
+  }
+  .results-info { font-size: 0.9rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; p { margin: 0; line-height: 1.2; strong { color: var(--color-primary-dark); } } }
+
+  .active-filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--color-primary);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 99px;
+    padding: 0.3rem 0.7rem 0.3rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    svg {
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    &:hover {
+      background: var(--color-primary-dark, #c47e30);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+
+      svg {
+        opacity: 1;
+        transform: rotate(90deg);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .filter-tag-reset {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 99px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: #999;
+      color: #666;
+      background: #f9f9f9;
+    }
+  }
+
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
   @media (max-width: 1200px) { .catalog-layout { gap: 2rem; grid-template-columns: 200px 1fr; } .grid { gap: 1rem; } }
   @media (max-width: 900px) { .catalog-layout { grid-template-columns: 1fr; padding: 0 0 3rem; gap: 0; } .results-info { display: none; } .mobile-actions { display: flex; } }
@@ -442,8 +654,8 @@
       display: flex;
       justify-content: center;
       margin-top: 1rem;
-      padding-top: 0;
-      border-top: none;
+      padding-top: 1rem;
+      border-top: 1px solid #f0f0f0;
 
       .icons-row {
         display: flex;
@@ -516,12 +728,22 @@
       .specs-list { gap: 0.4rem; padding-top: 0.8rem; .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } }
       .card-formats {
         margin-top: 0.8rem;
-        padding-top: 0;
+        padding-top: 0.8rem;
+        border-top: 1px solid #f0f0f0;
         .icons-row { gap: 0.6rem; justify-content: center; }
         .format-icon-wrapper { width: auto; }
         .card-format-icon { height: 28px; width: auto; }
         .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
       }
+    }
+    // Su mobile i tag filtri rimangono visibili ma più compatti
+    .active-filters-bar {
+      gap: 0.4rem;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+    }
+    .results-header {
+      margin-bottom: 1.5rem;
     }
   }
 </style>
