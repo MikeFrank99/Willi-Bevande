@@ -78,92 +78,114 @@
 
   export let initialBeers: BeerProp[];
 
-  // Stati per i filtri selezionati
-  let selectedBrand = '';
-  let selectedStyle = '';
-  let selectedColor = '';
-  let selectedCountry = '';
-  let selectedFormat = '';
+  // Stati per i filtri selezionati (ora array per selezione multipla)
+  let selectedBrands: string[] = [];
+  let selectedStyles: string[] = [];
+  let selectedColors: string[] = [];
+  let selectedCountries: string[] = [];
+  let selectedFormats: string[] = [];
   let maxAbv = 15;
   let searchQuery = '';
+  
+  // Gestione dropdown custom
+  let openDropdown: string | null = null;
+  function toggleDropdown(id: string) {
+    if (openDropdown === id) openDropdown = null;
+    else openDropdown = id;
+  }
+
+  function getSelectedLabel(category: string, currentSelections: string[], totalOptions: number) {
+    if (currentSelections.length === 0) {
+      const labels: Record<string, string> = {
+        brand: 'Tutte le marche',
+        style: 'Tutti gli stili',
+        color: 'Tutti i colori',
+        country: 'Tutte le nazioni',
+        format: 'Tutti i formati'
+      };
+      return `${labels[category]} (${totalOptions})`;
+    }
+    if (currentSelections.length === 1) return currentSelections[0];
+    return `${currentSelections.length} selezionati`;
+  }
+
+  // Chiudi dropdown al click fuori
+  function handleOutsideClick(e: MouseEvent) {
+    if (openDropdown && !(e.target as HTMLElement).closest('.filter-group')) {
+      openDropdown = null;
+    }
+  }
 
   // Sottoinsiemi reattivi incrociati
-  // Ogni "beersForX" esclude il filtro X stesso, così le opzioni di X mostrano
-  // quanti risultati si avrebbero con tutti gli altri filtri attivi.
   $: beersForBrand = initialBeers.filter(beer =>
-    (selectedStyle === '' || beer.data.style === selectedStyle) &&
-    (selectedColor === '' || beer.data.color === selectedColor) &&
-    (selectedCountry === '' || beer.data.country === selectedCountry) &&
-    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
+    (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedCountries.length === 0 || selectedCountries.includes(beer.data.country)) &&
+    (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
     (beer.data.abv <= maxAbv)
   );
   $: beersForStyle = initialBeers.filter(beer =>
-    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
-    (selectedColor === '' || beer.data.color === selectedColor) &&
-    (selectedCountry === '' || beer.data.country === selectedCountry) &&
-    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
+    (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedCountries.length === 0 || selectedCountries.includes(beer.data.country)) &&
+    (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
     (beer.data.abv <= maxAbv)
   );
   $: beersForColor = initialBeers.filter(beer =>
-    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
-    (selectedStyle === '' || beer.data.style === selectedStyle) &&
-    (selectedCountry === '' || beer.data.country === selectedCountry) &&
-    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
+    (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
+    (selectedCountries.length === 0 || selectedCountries.includes(beer.data.country)) &&
+    (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
     (beer.data.abv <= maxAbv)
   );
   $: beersForCountry = initialBeers.filter(beer =>
-    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
-    (selectedStyle === '' || beer.data.style === selectedStyle) &&
-    (selectedColor === '' || beer.data.color === selectedColor) &&
-    (selectedFormat === '' || beer.data.format.includes(selectedFormat)) &&
+    (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
+    (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
+    (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
     (beer.data.abv <= maxAbv)
   );
   $: beersForFormat = initialBeers.filter(beer =>
-    (selectedBrand === '' || beer.data.brand === selectedBrand) &&
-    (selectedStyle === '' || beer.data.style === selectedStyle) &&
-    (selectedColor === '' || beer.data.color === selectedColor) &&
-    (selectedCountry === '' || beer.data.country === selectedCountry) &&
+    (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
+    (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
+    (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedCountries.length === 0 || selectedCountries.includes(beer.data.country)) &&
     (beer.data.abv <= maxAbv)
   );
-
-  // --- BUG FIX: le opzioni includono SEMPRE il valore selezionato ---
-  // Per ogni filtro costruiamo la lista di opzioni garantendo che il valore
-  // attivo compaia sempre, anche se il suo count nel contesto incrociato è 0.
-  // Questo impedisce al <select> di mostrare un'opzione vuota.
 
   $: brands = (() => {
     const allValues = [...new Set(initialBeers.map(b => b.data.brand))].sort();
     return allValues
       .map(val => ({ name: val, count: beersForBrand.filter(b => b.data.brand === val).length }))
-      .filter(b => b.count > 0 || b.name === selectedBrand);
+      .filter(b => b.count > 0 || selectedBrands.includes(b.name));
   })();
 
   $: styles = (() => {
     const allValues = [...new Set(initialBeers.map(b => b.data.style))].sort();
     return allValues
       .map(val => ({ name: val, count: beersForStyle.filter(b => b.data.style === val).length }))
-      .filter(s => s.count > 0 || s.name === selectedStyle);
+      .filter(s => s.count > 0 || selectedStyles.includes(s.name));
   })();
 
   $: colors = (() => {
     const allValues = [...new Set(initialBeers.map(b => b.data.color))].sort();
     return allValues
       .map(val => ({ name: val, count: beersForColor.filter(b => b.data.color === val).length }))
-      .filter(c => c.count > 0 || c.name === selectedColor);
+      .filter(c => c.count > 0 || selectedColors.includes(c.name));
   })();
 
   $: countries = (() => {
     const allValues = [...new Set(initialBeers.map(b => b.data.country))].sort();
     return allValues
       .map(val => ({ name: val, count: beersForCountry.filter(b => b.data.country === val).length }))
-      .filter(c => c.count > 0 || c.name === selectedCountry);
+      .filter(c => c.count > 0 || selectedCountries.includes(c.name));
   })();
 
   $: formats = (() => {
     const allValues = [...new Set(initialBeers.flatMap(b => b.data.format))].sort();
     return allValues
       .map(val => ({ name: val, count: beersForFormat.filter(b => b.data.format.includes(val)).length }))
-      .filter(f => f.count > 0 || f.name === selectedFormat);
+      .filter(f => f.count > 0 || selectedFormats.includes(f.name));
   })();
 
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
@@ -173,11 +195,11 @@
 
   // Tag filtri attivi
   $: activeFilterTags = [
-    ...(selectedBrand ? [{ key: 'brand', label: `Marca: ${selectedBrand}`, clear: () => { selectedBrand = ''; } }] : []),
-    ...(selectedStyle ? [{ key: 'style', label: `Stile: ${selectedStyle}`, clear: () => { selectedStyle = ''; } }] : []),
-    ...(selectedColor ? [{ key: 'color', label: `Colore: ${selectedColor}`, clear: () => { selectedColor = ''; } }] : []),
-    ...(selectedCountry ? [{ key: 'country', label: `Nazione: ${selectedCountry}`, clear: () => { selectedCountry = ''; } }] : []),
-    ...(selectedFormat ? [{ key: 'format', label: `Formato: ${selectedFormat}`, clear: () => { selectedFormat = ''; } }] : []),
+    ...selectedBrands.map(val => ({ key: `brand-${val}`, label: `Marca: ${val}`, clear: () => toggleFilter('brand', val) })),
+    ...selectedStyles.map(val => ({ key: `style-${val}`, label: `Stile: ${val}`, clear: () => toggleFilter('style', val) })),
+    ...selectedColors.map(val => ({ key: `color-${val}`, label: `Colore: ${val}`, clear: () => toggleFilter('color', val) })),
+    ...selectedCountries.map(val => ({ key: `country-${val}`, label: `Nazione: ${val}`, clear: () => toggleFilter('country', val) })),
+    ...selectedFormats.map(val => ({ key: `format-${val}`, label: `Formato: ${val}`, clear: () => toggleFilter('format', val) })),
     ...(maxAbv < actualMaxAbv ? [{ key: 'abv', label: `Grad. max: ${maxAbv}%`, clear: () => { maxAbv = actualMaxAbv; } }] : []),
     ...(searchQuery ? [{ key: 'search', label: `Cerca: "${searchQuery}"`, clear: () => { searchQuery = ''; } }] : []),
   ];
@@ -195,11 +217,11 @@
     const validCountries = new Set(initialBeers.map(b => b.data.country));
     const validFormats = new Set(initialBeers.flatMap(b => b.data.format));
 
-    if (params.has('brand')) selectedBrand = validBrands.has(params.get('brand') || '') ? (params.get('brand') || '') : '';
-    if (params.has('style')) selectedStyle = validStyles.has(params.get('style') || '') ? (params.get('style') || '') : '';
-    if (params.has('color')) selectedColor = validColors.has(params.get('color') || '') ? (params.get('color') || '') : '';
-    if (params.has('country')) selectedCountry = validCountries.has(params.get('country') || '') ? (params.get('country') || '') : '';
-    if (params.has('format')) selectedFormat = validFormats.has(params.get('format') || '') ? (params.get('format') || '') : '';
+    if (params.has('brand')) selectedBrands = (params.get('brand') || '').split(',').filter(v => v && validBrands.has(v));
+    if (params.has('style')) selectedStyles = (params.get('style') || '').split(',').filter(v => v && validStyles.has(v));
+    if (params.has('color')) selectedColors = (params.get('color') || '').split(',').filter(v => v && validColors.has(v));
+    if (params.has('country')) selectedCountries = (params.get('country') || '').split(',').filter(v => v && validCountries.has(v));
+    if (params.has('format')) selectedFormats = (params.get('format') || '').split(',').filter(v => v && validFormats.has(v));
     if (params.has('maxAbv')) {
       const parsedAbv = parseFloat(params.get('maxAbv') || `${actualMaxAbv}`);
       if (!isNaN(parsedAbv)) maxAbv = parsedAbv;
@@ -211,8 +233,12 @@
       if (window.innerWidth > 900) showScrollToFilters = false;
       else showScrollToFilters = window.scrollY > 450;
     };
+    window.addEventListener('click', handleOutsideClick);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+      window.removeEventListener('scroll', handleScroll);
+    };
   });
 
   let showScrollToFilters = false;
@@ -220,22 +246,22 @@
   $: {
     if (!isInitializing && typeof window !== 'undefined') {
       const url = new URL(window.location.href);
-      if (selectedBrand) url.searchParams.set('brand', selectedBrand); else url.searchParams.delete('brand');
-      if (selectedStyle) url.searchParams.set('style', selectedStyle); else url.searchParams.delete('style');
-      if (selectedColor) url.searchParams.set('color', selectedColor); else url.searchParams.delete('color');
-      if (selectedCountry) url.searchParams.set('country', selectedCountry); else url.searchParams.delete('country');
-      if (selectedFormat) url.searchParams.set('format', selectedFormat); else url.searchParams.delete('format');
+      if (selectedBrands.length > 0) url.searchParams.set('brand', selectedBrands.join(',')); else url.searchParams.delete('brand');
+      if (selectedStyles.length > 0) url.searchParams.set('style', selectedStyles.join(',')); else url.searchParams.delete('style');
+      if (selectedColors.length > 0) url.searchParams.set('color', selectedColors.join(',')); else url.searchParams.delete('color');
+      if (selectedCountries.length > 0) url.searchParams.set('country', selectedCountries.join(',')); else url.searchParams.delete('country');
+      if (selectedFormats.length > 0) url.searchParams.set('format', selectedFormats.join(',')); else url.searchParams.delete('format');
       if (maxAbv < actualMaxAbv) url.searchParams.set('maxAbv', maxAbv.toString()); else url.searchParams.delete('maxAbv');
       window.history.replaceState(null, '', url.toString());
     }
   }
 
   $: filteredBeers = initialBeers.filter(beer => {
-    const matchBrand = selectedBrand === '' || beer.data.brand === selectedBrand;
-    const matchStyle = selectedStyle === '' || beer.data.style === selectedStyle;
-    const matchColor = selectedColor === '' || beer.data.color === selectedColor;
-    const matchCountry = selectedCountry === '' || beer.data.country === selectedCountry;
-    const matchFormat = selectedFormat === '' || beer.data.format.includes(selectedFormat);
+    const matchBrand = selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand);
+    const matchStyle = selectedStyles.length === 0 || selectedStyles.includes(beer.data.style);
+    const matchColor = selectedColors.length === 0 || selectedColors.includes(beer.data.color);
+    const matchCountry = selectedCountries.length === 0 || selectedCountries.includes(beer.data.country);
+    const matchFormat = selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f));
     const matchAbv = beer.data.abv <= maxAbv;
     const searchLower = searchQuery.toLowerCase().trim();
     const matchSearch = searchQuery === '' || (
@@ -250,8 +276,22 @@
     return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAbv && matchSearch;
   });
 
+  function toggleFilter(category: string, value: string) {
+    if (category === 'brand') {
+      selectedBrands = selectedBrands.includes(value) ? selectedBrands.filter(b => b !== value) : [...selectedBrands, value];
+    } else if (category === 'style') {
+      selectedStyles = selectedStyles.includes(value) ? selectedStyles.filter(s => s !== value) : [...selectedStyles, value];
+    } else if (category === 'color') {
+      selectedColors = selectedColors.includes(value) ? selectedColors.filter(c => c !== value) : [...selectedColors, value];
+    } else if (category === 'country') {
+      selectedCountries = selectedCountries.includes(value) ? selectedCountries.filter(c => c !== value) : [...selectedCountries, value];
+    } else if (category === 'format') {
+      selectedFormats = selectedFormats.includes(value) ? selectedFormats.filter(f => f !== value) : [...selectedFormats, value];
+    }
+  }
+
   function resetFilters() {
-    selectedBrand = ''; selectedStyle = ''; selectedColor = ''; selectedCountry = ''; selectedFormat = ''; searchQuery = ''; maxAbv = actualMaxAbv;
+    selectedBrands = []; selectedStyles = []; selectedColors = []; selectedCountries = []; selectedFormats = []; searchQuery = ''; maxAbv = actualMaxAbv;
   }
 
   function getBeerImage(beer: BeerProp) {
@@ -302,65 +342,135 @@
       
       <div class="filters-scroll">
         <div class="filter-group search-group">
-          <label for="search">Cerca nel catalogo</label>
+          <span class="group-title">Cerca nel catalogo</span>
           <div class="search-input-wrapper">
             <input type="text" id="search" placeholder="Cerca..." bind:value={searchQuery} />
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
         </div>
 
-        <div class="filter-group">
-          <label for="brand">Marca</label>
-          <select id="brand" bind:value={selectedBrand}>
-            <option value="">Tutte le marche ({beersForBrand.length})</option>
-            {#each brands as b}
-              <option value={b.name} class:option-zero={b.count === 0}>{b.name} ({b.count})</option>
-            {/each}
-          </select>
+        <div class="filter-group dropdown-group">
+          <span class="group-title">Marca</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'brand'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('brand')}>
+              <span class="trigger-label">{getSelectedLabel('brand', selectedBrands, brands.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'brand'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each brands as b}
+                    <label class="checkbox-item" class:selected={selectedBrands.includes(b.name)} class:option-zero={b.count === 0}>
+                      <input type="checkbox" checked={selectedBrands.includes(b.name)} on:change={() => toggleFilter('brand', b.name)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{b.name}</span>
+                      <span class="item-count">({b.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
 
-        <div class="filter-group">
-          <label for="style">Stile</label>
-          <select id="style" bind:value={selectedStyle}>
-            <option value="">Tutti gli stili ({beersForStyle.length})</option>
-            {#each styles as s}
-              <option value={s.name} class:option-zero={s.count === 0}>{s.name} ({s.count})</option>
-            {/each}
-          </select>
+        <div class="filter-group dropdown-group">
+          <span class="group-title">Stile</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'style'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('style')}>
+              <span class="trigger-label">{getSelectedLabel('style', selectedStyles, styles.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'style'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each styles as s}
+                    <label class="checkbox-item" class:selected={selectedStyles.includes(s.name)} class:option-zero={s.count === 0}>
+                      <input type="checkbox" checked={selectedStyles.includes(s.name)} on:change={() => toggleFilter('style', s.name)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{s.name}</span>
+                      <span class="item-count">({s.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
 
-        <div class="filter-group">
-          <label for="color">Colore</label>
-          <select id="color" bind:value={selectedColor}>
-            <option value="">Tutti i colori ({beersForColor.length})</option>
-            {#each colors as c}
-              <option value={c.name} class:option-zero={c.count === 0}>{c.name} ({c.count})</option>
-            {/each}
-          </select>
+        <div class="filter-group dropdown-group">
+          <span class="group-title">Colore</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'color'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('color')}>
+              <span class="trigger-label">{getSelectedLabel('color', selectedColors, colors.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'color'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each colors as c}
+                    <label class="checkbox-item" class:selected={selectedColors.includes(c.name)} class:option-zero={c.count === 0}>
+                      <input type="checkbox" checked={selectedColors.includes(c.name)} on:change={() => toggleFilter('color', c.name)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{c.name}</span>
+                      <span class="item-count">({c.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
 
-        <div class="filter-group">
-          <label for="country">Nazione</label>
-          <select id="country" bind:value={selectedCountry}>
-            <option value="">Tutte le nazioni ({beersForCountry.length})</option>
-            {#each countries as c}
-              <option value={c.name} class:option-zero={c.count === 0}>{c.name} ({c.count})</option>
-            {/each}
-          </select>
+        <div class="filter-group dropdown-group">
+          <span class="group-title">Nazione</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'country'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('country')}>
+              <span class="trigger-label">{getSelectedLabel('country', selectedCountries, countries.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'country'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each countries as c}
+                    <label class="checkbox-item" class:selected={selectedCountries.includes(c.name)} class:option-zero={c.count === 0}>
+                      <input type="checkbox" checked={selectedCountries.includes(c.name)} on:change={() => toggleFilter('country', c.name)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{c.name}</span>
+                      <span class="item-count">({c.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
 
-        <div class="filter-group">
-          <label for="format">Formato</label>
-          <select id="format" bind:value={selectedFormat}>
-            <option value="">Tutti i formati ({beersForFormat.length})</option>
-            {#each formats as f}
-              <option value={f.name} class:option-zero={f.count === 0}>{f.name} ({f.count})</option>
-            {/each}
-          </select>
+        <div class="filter-group dropdown-group">
+          <span class="group-title">Formato</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'format'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('format')}>
+              <span class="trigger-label">{getSelectedLabel('format', selectedFormats, formats.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'format'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each formats as f}
+                    <label class="checkbox-item" class:selected={selectedFormats.includes(f.name)} class:option-zero={f.count === 0}>
+                      <input type="checkbox" checked={selectedFormats.includes(f.name)} on:change={() => toggleFilter('format', f.name)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{f.name}</span>
+                      <span class="item-count">({f.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
 
         <div class="filter-group slider-group">
-          <label for="abv">Gradazione Massima: {maxAbv}%</label>
+          <span class="group-title">Gradazione Massima: {maxAbv}%</span>
           <div class="range-container">
             <input 
               type="range" id="abv" min={actualMinAbv} max={actualMaxAbv} step="0.1" bind:value={maxAbv} 
@@ -470,8 +580,8 @@
     .filters-panel h3 { margin-bottom: 1rem; font-size: 0.75rem; }
     .filter-group {
       margin-bottom: 1.2rem;
-      label { font-size: 0.72rem; margin-bottom: 0.25rem; }
-      select { font-size: 0.8rem; padding: 0.35rem 0; }
+      .group-title { font-size: 0.72rem; margin-bottom: 0.25rem; }
+      .dropdown-trigger { padding: 0.4rem 0; font-size: 0.8rem; }
       &.search-group { margin-bottom: 1.5rem;
         .search-input-wrapper input { padding: 0.5rem 0.8rem 0.5rem 2.4rem; font-size: 0.8rem; }
       }
@@ -485,8 +595,7 @@
     .filters-panel h3 { margin-bottom: 0.5rem; }
     .filter-group {
       margin-bottom: 0.7rem;
-      label { font-size: 0.68rem; margin-bottom: 0.15rem; }
-      select { font-size: 0.75rem; padding: 0.2rem 0; }
+      .group-title { font-size: 0.68rem; margin-bottom: 0.15rem; }
       &.search-group { margin-bottom: 0.9rem;
         .search-input-wrapper input { padding: 0.35rem 0.7rem 0.35rem 2rem; font-size: 0.75rem; }
       }
@@ -522,8 +631,154 @@
 
   .filter-group {
     margin-bottom: 2rem;
-    label { display: block; font-weight: 700; margin-bottom: 0.4rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-primary-dark); letter-spacing: 0.5px; }
-    select { width: 100%; padding: 0.6rem 0; border: none; border-bottom: 1px solid #eee; border-radius: 0; font-family: inherit; background: transparent; font-size: 0.9rem; cursor: pointer; transition: border-color 0.3s; &:focus { outline: none; border-bottom-color: var(--color-primary); color: var(--color-primary-dark); } }
+    .group-title { display: block; font-weight: 700; margin-bottom: 0.8rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-primary-dark); letter-spacing: 0.5px; }
+    
+    // --- DROPDOWN TILES ---
+    .dropdown-wrapper {
+      position: relative;
+      width: 100%;
+      &.is-open {
+        .dropdown-trigger {
+          border-bottom-color: var(--color-primary);
+          color: var(--color-primary-dark);
+          .arrow { transform: rotate(180deg); color: var(--color-primary); }
+        }
+      }
+    }
+
+    .dropdown-trigger {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #eee;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: #333;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s ease;
+      
+      &:hover { border-bottom-color: #ccc; }
+      
+      .trigger-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 10px;
+      }
+      
+      .arrow {
+        transition: transform 0.3s ease;
+        color: #bbb;
+      }
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #eee;
+      border-top: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      z-index: 100;
+      padding: 1rem;
+      border-radius: 0 0 8px 8px;
+      margin-top: -1px;
+    }
+
+    .filter-options-list {
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 8px;
+      
+      // Custom scrollbar
+      &::-webkit-scrollbar { width: 4px; }
+      &::-webkit-scrollbar-track { background: #f9f9f9; }
+      &::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
+      &::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      padding: 0.45rem 0;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: #666;
+      transition: all 0.2s;
+      user-select: none;
+      line-height: 1.2;
+      
+      input { display: none; }
+      
+      .checkbox-custom {
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid #ddd;
+        border-radius: 4px;
+        margin-right: 12px;
+        position: relative;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        background: white;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          width: 8px;
+          height: 4px;
+          border-left: 2px solid white;
+          border-bottom: 2px solid white;
+          top: 5px;
+          left: 4px;
+          transform: rotate(-45deg) scale(0);
+          transition: transform 0.2s;
+        }
+      }
+      
+      &.selected {
+        color: var(--color-primary-dark);
+        font-weight: 700;
+        .checkbox-custom {
+          background: var(--color-primary);
+          border-color: var(--color-primary);
+          &:after { transform: rotate(-45deg) scale(1); }
+        }
+      }
+      
+      &:hover:not(.selected) {
+        color: #1a1a1a;
+        .checkbox-custom { border-color: var(--color-primary); }
+      }
+      
+      .item-name { 
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .item-count {
+        margin-left: 10px;
+        font-size: 0.75rem;
+        color: #bbb;
+        font-weight: 500;
+        flex-shrink: 0;
+      }
+
+      &.option-zero {
+        opacity: 0.5;
+        &:hover { color: #666; .checkbox-custom { border-color: #ddd; } }
+      }
+    }
+
     .range-container { position: relative; width: 100%; padding: 15px 0; display: flex; align-items: center; }
     &.search-group { margin-bottom: 2.5rem; .search-input-wrapper { position: relative; display: flex; align-items: center; input { width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; background: #f4f4f4; border: 1px solid #eee; border-radius: 4px; font-family: inherit; font-size: 0.85rem; transition: all 0.3s ease; &:focus { outline: none; background: #fff; border-color: var(--color-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); } } .search-icon { position: absolute; left: 1rem; color: #999; pointer-events: none; } } }
     input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; outline: none; margin: 0; cursor: pointer; accent-color: var(--color-primary); border-radius: 2px; position: relative; z-index: 2; &::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--color-primary); border: none; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.2s; } &::-moz-range-thumb { width: 18px; height: 18px; background: var(--color-primary); border: none; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: transform 0.2s; } &:active::-webkit-slider-thumb, &:active::-moz-range-thumb { transform: scale(1.2); } }
