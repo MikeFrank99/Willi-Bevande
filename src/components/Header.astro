@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import logo from "../assets/logos/Willi_Logo.svg";
+import logo from "../assets/logos/WilliBevande_Logo.svg";
 const base = import.meta.env.BASE_URL;
 const pathname = new URL(Astro.request.url).pathname;
 // Remove leading base if present to normalize currentPath
@@ -18,8 +18,8 @@ const currentPath = pathname.startsWith(base)
                     <Image
                         src={logo}
                         alt="Willi Bevande Logo"
-                        width={230}
-                        height={160}
+                        width={240}
+                        height={240}
                         loading="eager"
                     />
                 </a>
@@ -61,14 +61,14 @@ const currentPath = pathname.startsWith(base)
         position: relative;
         z-index: 1000;
         border-bottom: 1px solid #eee;
-        padding: 2rem 0;
+        padding: 0;
 
         .header-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 0;
         }
 
         .logo-section {
@@ -83,8 +83,7 @@ const currentPath = pathname.startsWith(base)
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
-
+            padding: 0;
 
 
             .logo {
@@ -93,8 +92,10 @@ const currentPath = pathname.startsWith(base)
                 display: block;
 
                 img {
-                    height: 80px;
+                    height: 240px;
                     width: auto;
+                    margin-top: -2rem;
+                    margin-bottom: -1rem;
                     transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
                     display: block;
                 }
@@ -149,10 +150,12 @@ const currentPath = pathname.startsWith(base)
 
     @media (max-width: 768px) {
         .main-header {
-            padding: 1.5rem 0;
+            padding: 0;
 
             .logo img {
-                height: 60px;
+                height: 140px;
+                margin-top: -1rem;
+                margin-bottom: -0.5rem;
             }
 
             .main-nav ul {

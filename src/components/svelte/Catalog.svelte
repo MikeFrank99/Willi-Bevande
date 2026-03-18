@@ -570,7 +570,7 @@
   .filters-panel {
     background: transparent; padding: 0; position: sticky; top: 2rem; display: block; height: auto;
     &::-webkit-scrollbar { display: none; }
-    h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; color: #aaa; margin-top: 0; margin-bottom: 1.5rem; font-weight: 700; border: none; padding: 0; line-height: 1.2; }
+    h3 { font-family: var(--font-family-base); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; color: #aaa; margin-top: 0; margin-bottom: 1.5rem; font-weight: 700; border: none; padding: 0; line-height: 1.2; }
     .sidebar-header { display: flex; justify-content: space-between; align-items: center; @media (min-width: 901px) { .btn-close-filters { display: none !important; } h3 { margin-bottom: 2rem; } } }
     .btn-close-filters { display: none; background: none; border: none; font-size: 2rem; color: #333; cursor: pointer; line-height: 1; }
   }
@@ -631,7 +631,7 @@
 
   .filter-group {
     margin-bottom: 2rem;
-    .group-title { display: block; font-weight: 700; margin-bottom: 0.8rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-primary-dark); letter-spacing: 0.5px; }
+    .group-title { font-family: var(--font-family-base); display: block; font-weight: 700; margin-bottom: 0.8rem; font-size: 0.8rem; text-transform: uppercase; color: var(--color-primary-dark); letter-spacing: 0.5px; }
     
     // --- DROPDOWN TILES ---
     .dropdown-wrapper {
@@ -896,7 +896,7 @@
       margin-bottom: 1.5rem;
       height: 85px; /* Fixed height to align the specs below */
       justify-content: center;
-      h4 { margin: 0; color: var(--color-secondary); font-family: var(--font-family-base); font-size: 1.15rem; font-weight: 700; line-height: 1.3; transition: color 0.3s ease; } .brand { color: #aaa; font-size: 0.65rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 0.5rem; } }
+      h4 { margin: 0; color: var(--color-secondary); font-family: var(--font-family-title); font-size: 1.15rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.3; transition: color 0.3s ease; } .brand { color: #aaa; font-size: 0.65rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 0.5rem; } }
     .specs-list {
       display: flex; flex-direction: column; gap: 0.7rem; padding-top: 0.8rem; border-top: 1px solid #f0f0f0;
       .spec-group {

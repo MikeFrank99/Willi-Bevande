@@ -320,12 +320,14 @@ const getBeerImage = (beerData: any) => {
             }
 
             h1 {
+                font-family: var(--font-family-title);
                 font-size: 3rem;
-                font-weight: 800;
+                font-weight: 900;
                 color: var(--color-secondary);
                 margin: 0;
                 line-height: 1.1;
-                letter-spacing: -1px;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
             }
         }
     }
@@ -400,12 +402,13 @@ const getBeerImage = (beerData: any) => {
         margin-bottom: 4rem;
 
         h3 {
+            font-family: var(--font-family-title);
             font-size: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
             color: var(--color-secondary);
             margin-bottom: 1.5rem;
-            font-weight: 800;
+            font-weight: 900;
         }
 
         .markdown-content {
@@ -443,9 +446,10 @@ const getBeerImage = (beerData: any) => {
             color: white;
             padding: 1rem 2rem;
             text-decoration: none;
-            font-weight: 700;
+            font-family: var(--font-family-title);
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
             transition: all 0.3s ease;
 
             &:hover {

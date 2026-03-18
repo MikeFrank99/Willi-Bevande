@@ -109,12 +109,13 @@ const base = import.meta.env.BASE_URL;
 		max-width: 800px;
 
 		h1 {
+			font-family: var(--font-family-title);
 			font-size: 4rem;
 			line-height: 1.1;
 			margin-bottom: 2rem;
 			color: #fff;
-			font-weight: 800;
-			letter-spacing: -1px;
+			text-transform: uppercase;
+			letter-spacing: 0.02em;
 
 			.highlight {
 				color: var(--color-primary);
@@ -137,9 +138,10 @@ const base = import.meta.env.BASE_URL;
 		border-radius: 8px;
 		background-color: var(--color-primary);
 		color: #fff;
-		font-weight: bold;
+		font-family: var(--font-family-title);
+		font-weight: 900;
 		text-transform: uppercase;
-		letter-spacing: 1px;
+		letter-spacing: 0.05em;
 		transition: all var(--transition-speed);
 
 		&:hover {
@@ -202,9 +204,11 @@ const base = import.meta.env.BASE_URL;
 		}
 
 		h2 {
+			font-family: var(--font-family-title);
 			font-size: 2.5rem;
 			color: var(--color-secondary);
 			margin-bottom: 1.5rem;
+			text-transform: uppercase;
 
 			.highlight {
 				color: var(--color-primary);
