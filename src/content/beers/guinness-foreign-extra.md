@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Guinness Foreign Extra Stout"
 brand: "Guinness"
 style: "Stout"

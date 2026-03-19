@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Birra Moretti La Bianca"
 brand: "Birra Moretti"
 style: "Weiss"

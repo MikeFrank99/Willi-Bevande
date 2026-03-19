@@ -156,6 +156,15 @@ const getBeerImage = (beerData: any) => {
                                 })
                             }
                         </div>
+
+                        <div class={`availability-dot-container ${beer.data.availability}`}>
+                            <span class="dot"></span>
+                            <span class="status-text">
+                                {beer.data.availability === 'disponibile' ? 'DISPONIBILE ORA' :
+                                beer.data.availability === 'ordinazione' ? 'DA ORDINARE' :
+                                'DISPONIBILITÀ STAGIONALE'}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="description-area">
@@ -282,6 +291,7 @@ const getBeerImage = (beerData: any) => {
             align-items: center;
             aspect-ratio: 1 / 1;
             overflow: hidden;
+            position: relative;
 
             img {
                 width: 100%;
@@ -337,7 +347,7 @@ const getBeerImage = (beerData: any) => {
         flex-direction: column;
         gap: 1.2rem;
         margin-bottom: 4rem;
-        padding: 2rem 0;
+        padding: 2rem 0 0 0;
         border-top: 1px solid #f0f0f0;
         border-bottom: 1px solid #f0f0f0;
 
@@ -367,6 +377,43 @@ const getBeerImage = (beerData: any) => {
                 }
             }
         }
+
+        .availability-dot-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 0;
+            padding: 1.5rem 0;
+            border-top: 1px solid #f0f0f0;
+
+            .dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .status-text {
+                font-size: 0.85rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            &.disponibile {
+                .dot { background-color: #2e7d32; }
+                .status-text { color: #2e7d32; }
+            }
+            &.ordinazione {
+                .dot { background-color: #f57f17; }
+                .status-text { color: #f57f17; }
+            }
+            &.stagionale {
+                .dot { background-color: #c62828; }
+                .status-text { color: #c62828; }
+            }
+        }
     }
 
     .format-icons-container {
@@ -374,7 +421,7 @@ const getBeerImage = (beerData: any) => {
         flex-wrap: wrap;
         gap: 1.5rem;
         margin-top: 0.5rem; /* Increased distance from the label above */
-        margin-bottom: 0;
+        margin-bottom: 0.5rem;
         align-items: center;
         justify-content: flex-start;
 

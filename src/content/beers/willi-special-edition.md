@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Willi Special Edition"
 brand: "Willi Bevande"
 style: "Dortmunder Export"

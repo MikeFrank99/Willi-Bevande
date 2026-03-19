@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Guinness Hop House 13"
 brand: "Guinness"
 style: "Lager"

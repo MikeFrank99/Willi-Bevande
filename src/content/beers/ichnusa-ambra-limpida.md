@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Ichnusa Ambra Limpida"
 brand: "Ichnusa"
 style: "Lager"

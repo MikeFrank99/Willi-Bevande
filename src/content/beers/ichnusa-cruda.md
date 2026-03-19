@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Ichnusa Cruda"
 brand: "Ichnusa"
 style: "Lager"

@@ -1,4 +1,5 @@
 ---
+availability: "stagionale"
 title: "Leffe Rouge"
 brand: "Leffe"
 style: "Strong Ale"

@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Forst V.I.P. Pils"
 brand: "Forst"
 style: "Pilsner"

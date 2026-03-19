@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Leffe Blonde"
 brand: "Leffe"
 style: "Belgian Ale"

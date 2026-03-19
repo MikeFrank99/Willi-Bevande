@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Birra Moretti Ricetta Originale"
 brand: "Birra Moretti"
 style: "Lager"

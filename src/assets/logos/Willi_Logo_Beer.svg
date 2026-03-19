@@ -8,11 +8,11 @@
       }
 
       .st1 {
-        fill: #d4a373; /* Beer Amber */
+        fill: #ff4d45; /* Rosso acceso */
       }
       
       path {
-        fill: #d4a373;
+        fill: #ff4d45;
       }
     </style>
   </defs>

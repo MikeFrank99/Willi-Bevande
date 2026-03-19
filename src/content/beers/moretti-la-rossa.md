@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Birra Moretti La Rossa"
 brand: "Birra Moretti"
 style: "Bock"

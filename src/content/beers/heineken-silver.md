@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Heineken Silver"
 brand: "Heineken"
 style: "Light Lager"

@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Heineken Original"
 brand: "Heineken"
 style: "Lager"

@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Ichnusa Classica"
 brand: "Ichnusa"
 style: "Lager"

@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Forst Sixtus"
 brand: "Forst"
 style: "Doppelbock"

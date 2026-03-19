@@ -1,4 +1,5 @@
 ---
+availability: "stagionale"
 title: "Guinness Draught"
 brand: "Guinness"
 style: "Stout"

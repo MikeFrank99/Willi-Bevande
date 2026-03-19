@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Birra Moretti Baffo D'Oro"
 brand: "Birra Moretti"
 style: "Premium Lager"

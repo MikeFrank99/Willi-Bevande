@@ -58,6 +58,13 @@
 
   const base = import.meta.env.BASE_URL;
   // Usiamo Type per definire i props passati da Astro
+  type FilterTag = {
+    key: string;
+    label: string;
+    clear: () => void;
+    extraClass?: string;
+  };
+  
   type BeerProp = {
     id: string;
     slug: string;
@@ -71,6 +78,7 @@
       abv: number;
       color: string;
       country: string;
+      availability: 'disponibile' | 'ordinazione' | 'stagionale';
       image: string;
       description: string;
     };
@@ -84,6 +92,7 @@
   let selectedColors: string[] = [];
   let selectedCountries: string[] = [];
   let selectedFormats: string[] = [];
+  let selectedAvailabilities: string[] = [];
   let maxAbv = 15;
   let searchQuery = '';
   
@@ -101,7 +110,8 @@
         style: 'Tutti gli stili',
         color: 'Tutti i colori',
         country: 'Tutte le nazioni',
-        format: 'Tutti i formati'
+        format: 'Tutti i formati',
+        availability: 'Tutte le disponibilità'
       };
       return `${labels[category]} (${totalOptions})`;
     }
@@ -142,6 +152,15 @@
     (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
     (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
     (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
+    (selectedAvailabilities.length === 0 || selectedAvailabilities.includes(beer.data.availability)) &&
+    (beer.data.abv <= maxAbv)
+  );
+  $: beersForAvailability = initialBeers.filter(beer =>
+    (selectedBrands.length === 0 || selectedBrands.includes(beer.data.brand)) &&
+    (selectedStyles.length === 0 || selectedStyles.includes(beer.data.style)) &&
+    (selectedColors.length === 0 || selectedColors.includes(beer.data.color)) &&
+    (selectedCountries.length === 0 || selectedCountries.includes(beer.data.country)) &&
     (selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f))) &&
     (beer.data.abv <= maxAbv)
   );
@@ -188,18 +207,40 @@
       .filter(f => f.count > 0 || selectedFormats.includes(f.name));
   })();
 
+  const availabilityLabels: Record<string, string> = {
+    'disponibile': 'Disponibile ora',
+    'ordinazione': 'Da ordinare',
+    'stagionale': 'Disponibilità stagionale'
+  };
+
+  $: availabilitiesList = (() => {
+    const allValues = ['disponibile', 'ordinazione', 'stagionale'];
+    return allValues
+      .map(val => ({ 
+        id: val,
+        name: availabilityLabels[val], 
+        count: beersForAvailability.filter(b => b.data.availability === val).length 
+      }));
+  })();
+
   $: abvs = [...new Set(initialBeers.map(b => b.data.abv))].sort((a, b) => a - b);
   
   $: actualMinAbv = abvs.length > 0 ? abvs[0] : 0;
   $: actualMaxAbv = abvs.length > 0 ? abvs[abvs.length - 1] : 15;
 
-  // Tag filtri attivi
+  let activeFilterTags: FilterTag[] = [];
   $: activeFilterTags = [
     ...selectedBrands.map(val => ({ key: `brand-${val}`, label: `Marca: ${val}`, clear: () => toggleFilter('brand', val) })),
     ...selectedStyles.map(val => ({ key: `style-${val}`, label: `Stile: ${val}`, clear: () => toggleFilter('style', val) })),
     ...selectedColors.map(val => ({ key: `color-${val}`, label: `Colore: ${val}`, clear: () => toggleFilter('color', val) })),
     ...selectedCountries.map(val => ({ key: `country-${val}`, label: `Nazione: ${val}`, clear: () => toggleFilter('country', val) })),
     ...selectedFormats.map(val => ({ key: `format-${val}`, label: `Formato: ${val}`, clear: () => toggleFilter('format', val) })),
+    ...selectedAvailabilities.map(val => ({ 
+      key: `availability-${val}`, 
+      label: `Stato: ${availabilityLabels[val]}`, 
+      clear: () => toggleFilter('availability', val),
+      extraClass: `tag-${val}`
+    })),
     ...(maxAbv < actualMaxAbv ? [{ key: 'abv', label: `Grad. max: ${maxAbv}%`, clear: () => { maxAbv = actualMaxAbv; } }] : []),
     ...(searchQuery ? [{ key: 'search', label: `Cerca: "${searchQuery}"`, clear: () => { searchQuery = ''; } }] : []),
   ];
@@ -222,6 +263,8 @@
     if (params.has('color')) selectedColors = (params.get('color') || '').split(',').filter(v => v && validColors.has(v));
     if (params.has('country')) selectedCountries = (params.get('country') || '').split(',').filter(v => v && validCountries.has(v));
     if (params.has('format')) selectedFormats = (params.get('format') || '').split(',').filter(v => v && validFormats.has(v));
+    const validAvailabilities = new Set(['disponibile', 'ordinazione', 'stagionale']);
+    if (params.has('availability')) selectedAvailabilities = (params.get('availability') || '').split(',').filter(v => v && validAvailabilities.has(v));
     if (params.has('maxAbv')) {
       const parsedAbv = parseFloat(params.get('maxAbv') || `${actualMaxAbv}`);
       if (!isNaN(parsedAbv)) maxAbv = parsedAbv;
@@ -251,6 +294,7 @@
       if (selectedColors.length > 0) url.searchParams.set('color', selectedColors.join(',')); else url.searchParams.delete('color');
       if (selectedCountries.length > 0) url.searchParams.set('country', selectedCountries.join(',')); else url.searchParams.delete('country');
       if (selectedFormats.length > 0) url.searchParams.set('format', selectedFormats.join(',')); else url.searchParams.delete('format');
+      if (selectedAvailabilities.length > 0) url.searchParams.set('availability', selectedAvailabilities.join(',')); else url.searchParams.delete('availability');
       if (maxAbv < actualMaxAbv) url.searchParams.set('maxAbv', maxAbv.toString()); else url.searchParams.delete('maxAbv');
       window.history.replaceState(null, '', url.toString());
     }
@@ -262,6 +306,7 @@
     const matchColor = selectedColors.length === 0 || selectedColors.includes(beer.data.color);
     const matchCountry = selectedCountries.length === 0 || selectedCountries.includes(beer.data.country);
     const matchFormat = selectedFormats.length === 0 || beer.data.format.some(f => selectedFormats.includes(f));
+    const matchAvailability = selectedAvailabilities.length === 0 || selectedAvailabilities.includes(beer.data.availability);
     const matchAbv = beer.data.abv <= maxAbv;
     const searchLower = searchQuery.toLowerCase().trim();
     const matchSearch = searchQuery === '' || (
@@ -273,7 +318,7 @@
       beer.data.format.some(f => f.toLowerCase().includes(searchLower)) ||
       beer.data.abv.toString().includes(searchLower)
     );
-    return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAbv && matchSearch;
+    return matchBrand && matchStyle && matchColor && matchCountry && matchFormat && matchAvailability && matchAbv && matchSearch;
   });
 
   function toggleFilter(category: string, value: string) {
@@ -287,11 +332,13 @@
       selectedCountries = selectedCountries.includes(value) ? selectedCountries.filter(c => c !== value) : [...selectedCountries, value];
     } else if (category === 'format') {
       selectedFormats = selectedFormats.includes(value) ? selectedFormats.filter(f => f !== value) : [...selectedFormats, value];
+    } else if (category === 'availability') {
+      selectedAvailabilities = selectedAvailabilities.includes(value) ? selectedAvailabilities.filter(a => a !== value) : [...selectedAvailabilities, value];
     }
   }
 
   function resetFilters() {
-    selectedBrands = []; selectedStyles = []; selectedColors = []; selectedCountries = []; selectedFormats = []; searchQuery = ''; maxAbv = actualMaxAbv;
+    selectedBrands = []; selectedStyles = []; selectedColors = []; selectedCountries = []; selectedFormats = []; selectedAvailabilities = []; searchQuery = ''; maxAbv = actualMaxAbv;
   }
 
   function getBeerImage(beer: BeerProp) {
@@ -422,6 +469,30 @@
         </div>
 
         <div class="filter-group dropdown-group">
+          <span class="group-title">Disponibilità</span>
+          <div class="dropdown-wrapper" class:is-open={openDropdown === 'availability'}>
+            <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('availability')}>
+              <span class="trigger-label">{getSelectedLabel('availability', selectedAvailabilities, availabilitiesList.length)}</span>
+              <svg class="arrow" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            {#if openDropdown === 'availability'}
+              <div class="dropdown-panel">
+                <div class="filter-options-list">
+                  {#each availabilitiesList as a}
+                    <label class="checkbox-item availability-{a.id}" class:selected={selectedAvailabilities.includes(a.id)} class:option-zero={a.count === 0}>
+                      <input type="checkbox" checked={selectedAvailabilities.includes(a.id)} on:change={() => toggleFilter('availability', a.id)} />
+                      <span class="checkbox-custom"></span>
+                      <span class="item-name">{a.name}</span>
+                      <span class="item-count">({a.count})</span>
+                    </label>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
+        </div>
+
+        <div class="filter-group dropdown-group">
           <span class="group-title">Nazione</span>
           <div class="dropdown-wrapper" class:is-open={openDropdown === 'country'}>
             <button class="dropdown-trigger" on:click|stopPropagation={() => toggleDropdown('country')}>
@@ -513,7 +584,7 @@
       {#if hasActiveFilters}
         <div class="active-filters-bar" transition:fly={{ y: -12, duration: 250 }}>
           {#each activeFilterTags as tag (tag.key)}
-            <button class="filter-tag" on:click={tag.clear} title="Rimuovi filtro">
+            <button class="filter-tag {tag.extraClass || ''}" on:click={tag.clear} title="Rimuovi filtro">
               <span>{tag.label}</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -530,7 +601,9 @@
       <div class="grid">
         {#each filteredBeers as beer (beer.id)}
           <a href="{base}catalogo/{beer.slug}/" class="beer-card">
-            <div class="img-wrapper"><img src={getBeerImage(beer)} alt={beer.data.title} class="beer-img" /></div>
+            <div class="img-wrapper">
+              <img src={getBeerImage(beer)} alt={beer.data.title} class="beer-img" />
+            </div>
             <div class="card-info">
               <div class="content"><h4>{beer.data.title}</h4><p class="brand">{beer.data.brand}</p></div>
               <div class="specs-list">
@@ -555,6 +628,15 @@
                     {/if}
                   {/each}
                 </div>
+              </div>
+
+              <div class="availability-dot-container {beer.data.availability}">
+                <span class="dot"></span>
+                <span class="status-text">
+                  {beer.data.availability === 'disponibile' ? 'DISPONIBILE ORA' : 
+                   beer.data.availability === 'ordinazione' ? 'DA ORDINARE' : 
+                   'DISPONIBILITÀ STAGIONALE'}
+                </span>
               </div>
             </div>
           </a>
@@ -764,6 +846,9 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+      &.availability-disponibile .item-name { color: #2e7d32; font-weight: 600; }
+      &.availability-ordinazione .item-name { color: #f57f17; font-weight: 600; }
+      &.availability-stagionale .item-name { color: #c62828; font-weight: 600; }
 
       .item-count {
         margin-left: 10px;
@@ -824,6 +909,10 @@
     transition: all 0.2s ease;
     white-space: nowrap;
 
+    &.tag-disponibile { background: #2e7d32 !important; color: white; &:hover { background: #1b5e20; } }
+    &.tag-ordinazione { background: #f57f17 !important; color: white; &:hover { background: #e65100; } }
+    &.tag-stagionale { background: #c62828 !important; color: white; &:hover { background: #b71c1c; } }
+
     svg {
       flex-shrink: 0;
       opacity: 0.7;
@@ -871,13 +960,61 @@
     }
   }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-  @media (max-width: 1200px) { .catalog-layout { gap: 2rem; grid-template-columns: 200px 1fr; } .grid { gap: 1rem; } }
-  @media (max-width: 900px) { .catalog-layout { grid-template-columns: 1fr; padding: 0 0 3rem; gap: 0; } .results-info { display: none; } .mobile-actions { display: flex; } }
-  @media (max-width: 480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; } }
+  .grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1.5rem; 
+  }
+  @media (max-width: 1400px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { 
+    .catalog-layout { grid-template-columns: 1fr; padding: 0 0 3rem; gap: 0; } 
+    .results-info { display: none; } 
+    .mobile-actions { display: flex; } 
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; } 
+  }
+  @media (max-width: 480px) { 
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; } 
+  }
   .beer-card {
-    text-decoration: none; display: flex; flex-direction: column; padding: 0 1.5rem 1.5rem 1.5rem; background: #ffffff; border: 1px solid #f0f0f0; transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1); position: relative; height: 100%; border-radius: 0; overflow: hidden;
+    text-decoration: none; display: flex; flex-direction: column; padding: 0 1.5rem 0 1.5rem; background: #ffffff; border: 1px solid #f0f0f0; transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1); position: relative; height: 100%; border-radius: 0; overflow: hidden;
     &:before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--color-primary); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+    .availability-dot-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-text {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      &.disponibile {
+        .dot { background-color: #2e7d32; }
+        .status-text { color: #2e7d32; }
+      }
+      &.ordinazione {
+        .dot { background-color: #f57f17; }
+        .status-text { color: #f57f17; }
+      }
+      &.stagionale {
+        .dot { background-color: #c62828; }
+        .status-text { color: #c62828; }
+      }
+    }
     .img-wrapper {
       aspect-ratio: 1 / 1; background: #ffffff; display: flex; justify-content: center; align-items: center; margin: 0 -1.5rem 1.5rem -1.5rem; border: none; border-bottom: 1px solid #f0f0f0; position: relative; transition: all 0.5s ease; overflow: hidden; z-index: 1;
       .beer-img { width: 100%; height: 100%; object-fit: cover; object-position: center; z-index: 2; transition: transform 0.5s ease; }
@@ -894,11 +1031,13 @@
       flex-direction: column;
       text-align: center;
       margin-bottom: 1.5rem;
-      height: 85px; /* Fixed height to align the specs below */
+      min-height: 100px; /* Min height to align the specs below while showing long titles */
       justify-content: center;
       h4 { margin: 0; color: var(--color-secondary); font-family: var(--font-family-title); font-size: 1.15rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.3; transition: color 0.3s ease; } .brand { color: #aaa; font-size: 0.65rem; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 0.5rem; } }
     .specs-list {
-      display: flex; flex-direction: column; gap: 0.7rem; padding-top: 0.8rem; border-top: 1px solid #f0f0f0;
+      display: flex; flex-direction: column; gap: 0.7rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;
+      min-height: 70px; /* Fixed height for alignment */
+      justify-content: flex-start;
       .spec-group {
         display: flex; justify-content: space-between; align-items: center; gap: 1rem;
         .label { font-size: 0.65rem; color: #bbb; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; flex-shrink: 0; }
@@ -972,8 +1111,7 @@
       }
       
       .content {
-        height: auto;
-        min-height: 48px;
+        min-height: 95px; /* Fixed min-height for mobile alignment without cutting titles */
         margin-bottom: 0.6rem;
         display: flex;
         flex-direction: column;
@@ -982,10 +1120,17 @@
           font-size: 0.85rem;
           line-height: 1.2;
           margin-bottom: 0.1rem;
+          /* Removed line-clamp to show full titles */
         }
         .brand { margin: 0; font-size: 0.5rem; line-height: 1.2; }
       }
-      .specs-list { gap: 0.4rem; padding-top: 0.8rem; .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } }
+      .specs-list { 
+        min-height: 48px; /* Fixed height for mobile specs */
+        gap: 0.4rem; 
+        padding-top: 0.8rem; 
+        justify-content: center;
+        .spec-group .value { font-size: 0.8rem; &.accent { font-size: 1rem; } } 
+      }
       .card-formats {
         margin-top: 0.8rem;
         padding-top: 0.8rem;
@@ -994,6 +1139,10 @@
         .format-icon-wrapper { width: auto; }
         .card-format-icon { height: 28px; width: auto; }
         .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
+      }
+      .availability-dot-container {
+        padding-bottom: 0px;
+        padding-top: 0.8rem;
       }
     }
     // Su mobile i tag filtri rimangono visibili ma più compatti

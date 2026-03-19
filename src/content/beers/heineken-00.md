@@ -1,4 +1,5 @@
 ---
+availability: "ordinazione"
 title: "Heineken 0.0"
 brand: "Heineken"
 style: "Analcolica"

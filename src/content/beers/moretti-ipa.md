@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Birra Moretti IPA"
 brand: "Birra Moretti"
 style: "IPA"

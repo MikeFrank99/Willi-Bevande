@@ -1,4 +1,5 @@
 ---
+availability: "disponibile"
 title: "Forst Kronen"
 brand: "Forst"
 style: "Premium Lager"

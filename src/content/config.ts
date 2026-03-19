@@ -10,6 +10,7 @@ const beersCollection = defineCollection({
     format: z.array(z.string()),
     abv: z.number(),
     country: z.string(),
+    availability: z.enum(['disponibile', 'ordinazione', 'stagionale']).default('disponibile'),
     image: z.string(),
     description: z.string()
   }),

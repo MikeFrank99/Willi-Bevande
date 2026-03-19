@@ -1,4 +1,5 @@
 ---
+availability: "stagionale"
 title: "Ichnusa Non Filtrata"
 brand: "Ichnusa"
 style: "Lager Non Filtrata"
