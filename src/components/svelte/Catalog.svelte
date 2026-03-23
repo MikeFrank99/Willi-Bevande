@@ -985,10 +985,10 @@
     .catalog-layout { grid-template-columns: 1fr; padding: 0 0 3rem; gap: 0; } 
     .results-info { display: none; } 
     .mobile-actions { display: flex; } 
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; } 
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; } 
   }
   @media (max-width: 480px) { 
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; } 
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } 
   }
   .beer-card {
     text-decoration: none; display: flex; flex-direction: column; padding: 0 1.5rem 0 1.5rem; background: #ffffff; border: 2px solid #000000; transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1); position: relative; height: 100%; border-radius: 0; overflow: hidden;
