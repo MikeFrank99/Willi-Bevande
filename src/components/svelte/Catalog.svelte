@@ -1092,7 +1092,7 @@
       .more-indicator {
         position: absolute;
         bottom: 3px;
-        right: -16px;
+        right: -10px;
         font-size: 0.7rem;
         font-weight: 800;
         color: #bbb;
@@ -1165,10 +1165,10 @@
         margin-top: 0.8rem;
         padding-top: 0.8rem;
         border-top: 2px solid #000000;
-        .icons-row { gap: 0.6rem; justify-content: center; }
+        .icons-row { gap: 0.35rem; justify-content: center; }
         .format-icon-wrapper { width: auto; }
-        .card-format-icon { height: 28px; width: auto; }
-        .more-indicator { font-size: 0.6rem; right: -14px; bottom: 2px; }
+        .card-format-icon { height: 22px; width: auto; }
+        .more-indicator { font-size: 0.6rem; right: -10px; bottom: 2px; }
       }
       .availability-dot-container {
         padding-bottom: 0px;
