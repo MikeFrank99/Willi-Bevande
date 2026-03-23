@@ -696,7 +696,7 @@
     .range-labels { margin-top: 2px; }
     .btn-reset { padding: 0.4rem; font-size: 0.65rem; margin-top: 0.3rem; }
   }
-  .btn-toggle-filters { display: flex; align-items: center; gap: 0.75rem; background: #1a1a1a; color: white; border: 2px solid #000000; padding: 0.8rem 1.5rem; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; border-radius: 0; transition: background 0.3s; &:hover { background: var(--color-primary); } span, svg { color: white !important; } }
+  .btn-toggle-filters { display: flex; align-items: center; gap: 0.75rem; background: #1a1a1a; color: white; border: none; padding: 0.8rem 1.5rem; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; cursor: pointer; border-radius: 4px; transition: background 0.3s; &:hover { background: var(--color-primary); } span, svg { color: white !important; } }
   .mobile-actions { display: none; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 2rem; position: relative; z-index: 10; background: transparent; padding: 1rem 0; border-bottom: 2px solid #000000; .results-info-mobile { font-size: 0.75rem; text-transform: uppercase; color: #1a1a1a; letter-spacing: 0.5px; font-weight: 800; strong { color: #000; font-weight: 900; } } }
   .filters-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1500; }
   .sidebar-footer-mobile { display: none; padding: 2rem 0; .btn-apply { width: 100%; padding: 1.2rem; background: var(--color-primary); color: white; border: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; } }
@@ -778,12 +778,11 @@
       right: 0;
       background: white;
       border: 2px solid #000000;
-      border-top: none;
       box-shadow: 0 10px 30px rgba(0,0,0,0.12);
       z-index: 100;
       padding: 1rem;
       border-radius: 0;
-      margin-top: -2px;
+      margin-top: 0.5rem;
     }
 
     .filter-options-list {
@@ -821,28 +820,32 @@
         transition: all 0.2s;
         flex-shrink: 0;
         background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         
         &:after {
           content: '';
           position: absolute;
-          width: 8px;
-          height: 4px;
-          border-left: 2px solid white;
-          border-bottom: 2px solid white;
-          top: 5px;
-          left: 4px;
-          transform: rotate(-45deg) scale(0);
-          transition: transform 0.2s;
+          width: 9px;
+          height: 5px;
+          border-left: 2.5px solid #ffffff;
+          border-bottom: 2.5px solid #ffffff;
+          top: 45%;
+          left: 50%;
+          transform: translate(-50%, -60%) rotate(-45deg) scale(0);
+          transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transform-origin: center;
         }
       }
       
       &.selected {
-        color: var(--color-primary-dark);
-        font-weight: 700;
+        color: #000000;
+        font-weight: 800;
         .checkbox-custom {
           background: var(--color-primary);
-          border-color: var(--color-primary);
-          &:after { transform: rotate(-45deg) scale(1); }
+          border-color: #000000;
+          &:after { transform: translate(-50%, -60%) rotate(-45deg) scale(1); }
         }
       }
       
