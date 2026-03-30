@@ -1,0 +1,28 @@
+18:37:25 [ERROR] [vite] Ô£ù Build failed in 745ms
+[astro:build] [sass] The target selector was not found.
+Use "@extend .btn !optional" to avoid this error.
+   ÔòÀ
+58 Ôöé         @extend .btn;
+   Ôöé         ^^^^^^^^^^^^
+   ÔòÁ
+  src\pages\index.astro 58:3  root stylesheet
+file: C:/Users/Blues/Documents/Programmazione/Programmi/Willi/src/pages/index.astro:135:3
+
+[sass] The target selector was not found.
+Use "@extend .btn !optional" to avoid this error.
+   ÔòÀ
+58 Ôöé         @extend .btn;
+   Ôöé         ^^^^^^^^^^^^
+   ÔòÁ
+  src\pages\index.astro 58:3  root stylesheet
+
+  Error reference:
+    https://docs.astro.build/en/reference/errors/unknown-csserror/
+  Location:
+    C:/Users/Blues/Documents/Programmazione/Programmi/Willi/src/pages/index.astro:135:3
+  Stack trace:
+    at Object.wrapException (C:\Users\Blues\Documents\Programmazione\Programmi\Willi\node_modules\sass\sass.dart.js:2337:47)
+    at _EvaluateVisitor2._async_evaluate0$_combineCss$2$clone (C:\Users\Blues\Documents\Programmazione\Programmi\Willi\node_modules\sass\sass.dart.js:88848:16)
+    at C:\Users\Blues\Documents\Programmazione\Programmi\Willi\node_modules\sass\sass.dart.js:94774:110
+    at _wrapJsFunctionForAsync_closure.call$2 (C:\Users\Blues\Documents\Programmazione\Programmi\Willi\node_modules\sass\sass.dart.js:38601:12)
+    at Object._rootRunUnary (C:\Users\Blues\Documents\Programmazione\Programmi\Willi\node_modules\sass\sass.dart.js:5423:18)

@@ -93,17 +93,12 @@
     }
 
     .btn {
-        @extend .btn;
         font-size: 1rem;
         min-width: 160px;
 
-        &.btn-primary {
-            @extend .btn-primary;
-        }
-
         &.btn-secondary {
             background-color: transparent;
-            border-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: #ffffff;
 
             &:hover {
