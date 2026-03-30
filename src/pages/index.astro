@@ -93,11 +93,11 @@ const base = import.meta.env.BASE_URL;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			/* Background pattern scuro e premium */
+			/* Background premium verde e ambra */
 			background: radial-gradient(
-				circle at center,
-				#2a1a0f 0%,
-				#0d0d0d 100%
+				circle at top right,
+				rgba(212, 163, 115, 0.1) 0%,
+				#1a2b1b 100%
 			);
 			z-index: 1;
 		}
@@ -132,24 +132,10 @@ const base = import.meta.env.BASE_URL;
 	}
 
 	.btn-large {
-		padding: 1rem 2.5rem;
-		font-size: 1.3rem;
-		display: inline-block;
-		border-radius: 8px;
-		background-color: var(--color-primary);
-		color: #fff;
-		font-family: var(--font-family-title);
-		font-weight: 900;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		transition: all var(--transition-speed);
-
-		&:hover {
-			background-color: var(--color-primary-dark);
-			transform: translateY(-3px);
-			box-shadow: 0 10px 20px rgba(var(--color-primary), 0.3);
-			color: white;
-		}
+		@extend .btn;
+		@extend .btn-primary;
+		padding: 1.2rem 3rem;
+		font-size: 1.2rem;
 	}
 
 	.features {
@@ -164,25 +150,30 @@ const base = import.meta.env.BASE_URL;
 
 	.feature-card {
 		background: var(--color-bg-alt);
-		padding: 2.5rem;
-		border-radius: 12px;
-		box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-		border-top: 4px solid var(--color-primary);
-		transition: transform var(--transition-speed);
+		padding: 3rem 2.5rem;
+		border-radius: var(--border-radius);
+		box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+		border: 2px solid var(--color-primary);
+		transition: all var(--transition-speed);
+		text-align: center;
 
 		h3 {
-			font-size: 1.5rem;
-			margin-bottom: 1rem;
-			color: var(--color-secondary);
+			font-size: 1.6rem;
+			margin-bottom: 1.5rem;
+			color: var(--color-primary);
+			font-family: var(--font-family-title);
 		}
 
 		p {
-			color: var(--color-text-light);
+			color: rgba(255, 255, 255, 0.8);
 			font-size: 1.1rem;
+			line-height: 1.6;
 		}
 
 		&:hover {
 			transform: translateY(-10px);
+			border-color: #ffffff;
+			background: #2e4e31;
 		}
 	}
 
@@ -223,21 +214,14 @@ const base = import.meta.env.BASE_URL;
 		}
 
 		.btn-outline {
-			padding: 1rem 2rem;
-			font-size: 1.1rem;
-			display: inline-block;
-			border-radius: 8px;
-			background-color: transparent;
-			border: 2px solid var(--color-primary);
+			@extend .btn;
+			@extend .btn-outline;
 			color: var(--color-primary);
-			font-weight: bold;
-			text-transform: uppercase;
-			transition: all var(--transition-speed);
+			border-color: var(--color-primary);
 
 			&:hover {
 				background-color: var(--color-primary);
 				color: #fff;
-				transform: translateY(-3px);
 			}
 		}
 	}

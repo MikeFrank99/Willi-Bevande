@@ -18,21 +18,21 @@
 
 :root {
     --color-bg: #f9f9f9;
-    --color-bg-alt: #ffffff;
+    --color-bg-alt: #385e3c; /* Verde foresta delle schede */
     --color-text: #2a2a2a;
     --color-text-light: #6a6a6a;
     --color-primary: #d4a373;
-    /* Colore ambrato premium birra -> Rosso acceso */
-    --color-primary-dark: #d4a373;
-    --color-secondary: #3e2723;
-    /* Marrone scuro */
+    /* Colore ambrato premium birra */
+    --color-primary-dark: #b88655; /* Versione leggermente più scura per hover */
+    --color-secondary: #1a2b1b;
+    /* Verde scurissimo per testi su chiaro */
 
     --font-family-base: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     --font-family-title: 'GT America Expanded', var(--font-family-base);
     --font-family-nav: 'GT America', var(--font-family-base);
     --container-width: 1600px;
-    --border-radius: 0px; /* Flat design usually prefers sharp corners or very subtle ones, setting to 0 for strict flat */
-    --transition-speed: 0.2s;
+    --border-radius: 12px; /* Uniformato alle schede catalogo */
+    --transition-speed: 0.3s;
 }
 
 body {
@@ -68,6 +68,49 @@ a {
 
     &:hover {
         color: var(--color-secondary);
+    }
+}
+
+/* Utility Classes for Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 2rem;
+    font-family: var(--font-family-title);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
+
+    &:hover {
+        background-color: transparent;
+        color: var(--color-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(212, 163, 115, 0.3);
+    }
+}
+
+.btn-outline {
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+
+    &:hover {
+        background-color: var(--color-primary);
+        color: #ffffff;
+        transform: translateY(-2px);
     }
 }
 

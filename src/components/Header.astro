@@ -122,40 +122,35 @@ const currentPath = pathname.startsWith(base)
                 color: #ffffff;
                 text-decoration: none;
                 font-family: var(--font-family-base), sans-serif;
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 font-weight: 800;
                 text-transform: uppercase;
-                letter-spacing: 0.12em;
-                padding: 0.8rem 2.2rem;
-                border: none;
-                border-radius: 0px;
+                letter-spacing: 0.08em;
+                padding: 0.7rem 1.8rem;
+                border: 2px solid transparent;
+                border-radius: var(--border-radius);
                 background: var(--color-primary);
-                transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+                transition: all var(--transition-speed) ease;
                 display: block;
-                position: relative;
-                transform: skew(-10deg);
                 white-space: nowrap;
 
                 span {
                     display: block;
-                    transform: skew(10deg);
-                    transition: transform 0.3s;
                 }
 
                 &:hover {
-                    background: #000000;
-                    color: white;
-                    transform: skew(-10deg) translateY(-2px);
+                    background: transparent;
+                    border-color: var(--color-primary);
+                    color: var(--color-primary);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(212, 163, 115, 0.2);
                 }
 
                 &.active {
-                    background: #000000;
+                    background: var(--color-secondary);
                     color: white;
+                    border-color: var(--color-secondary);
                     cursor: default;
-                }
-
-                &:active:not(.active) {
-                    transform: skew(-10deg) translateY(0);
                 }
             }
         }

@@ -55,22 +55,25 @@
     .age-gate-modal {
         background: var(--color-bg-alt);
         padding: 3rem;
-        border-radius: 12px;
+        border-radius: var(--border-radius);
         max-width: 500px;
         width: 90%;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        border-top: 5px solid var(--color-primary);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        border: 2px solid var(--color-primary);
 
         h2 {
-            color: var(--color-secondary);
-            margin-bottom: 1rem;
-            font-size: 1.8rem;
+            color: var(--color-primary);
+            font-family: var(--font-family-title);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-transform: uppercase;
         }
 
         p {
-            color: var(--color-text-light);
-            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
         }
     }
 
@@ -90,32 +93,22 @@
     }
 
     .btn {
-        padding: 0.8rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        flex: 1 1 auto; /* Grow to fill space consistently */
-        min-width: 140px;
+        @extend .btn;
+        font-size: 1rem;
+        min-width: 160px;
 
         &.btn-primary {
-            background-color: var(--color-primary);
-            color: var(--color-bg-alt);
-
-            &:hover {
-                background-color: var(--color-primary-dark);
-                transform: translateY(-2px);
-            }
+            @extend .btn-primary;
         }
 
         &.btn-secondary {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: var(--color-text);
+            background-color: transparent;
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
 
             &:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+                background-color: rgba(255, 255, 255, 0.1);
+                border-color: #ffffff;
             }
         }
     }
